@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAARYA | Industrial Skill Verification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Dark Theme */
+  --bg: #0B0D0E;
+  --panel-deep: #111416;
+  --panel: #171A1D;
+  --panel-elevated: #1D2124;
+  --accent: #F7DC00;
+  --text: #F4F4F0;
+  --text-2: #9CA3A7;
+  --text-3: #60676C;
+  --border: #2A2F33;
+  --radius: 4px;
+  
+  --badge-ready-bg: rgba(122,214,120,0.14);
+  --badge-ready-text: #7ad678;
+  --badge-ready-border: rgba(122,214,120,0.4);
+  
+  --badge-near-bg: rgba(247,220,0,0.14);
+  --badge-near-text: #F7DC00;
+  --badge-near-border: rgba(247,220,0,0.4);
+  
+  --badge-not-bg: rgba(255,110,110,0.12);
+  --badge-not-text: #ff8a8a;
+  --badge-not-border: rgba(255,110,110,0.35);
+
+  --font-sans: 'Space Grotesk', 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  
+  --vp-bg-center: #3A4148;
+  --vp-bg-edge: #171A1D;
+}
+
+[data-theme="light"] {
+  /* Light Theme */
+  --bg: #F7FAFC;
+  --panel-deep: #E2E8F0;
+  --panel: #FFFFFF;
+  --panel-elevated: #F1F5F9;
+  --accent: #D97706; 
+  --text: #0F172A;
+  --text-2: #475569;
+  --text-3: #64748B;
+  --border: #CBD5E1;
+
+  --badge-ready-bg: #DCFCE7;
+  --badge-ready-text: #166534;
+  --badge-ready-border: #86EFAC;
+  
+  --badge-near-bg: #FEF9C3;
+  --badge-near-text: #854D0E;
+  --badge-near-border: #FDE047;
+  
+  --badge-not-bg: #FEE2E2;
+  --badge-not-text: #991B1B;
+  --badge-not-border: #FCA5A5;
+  
+  --vp-bg-center: #F8FAFC;
+  --vp-bg-edge: #CBD5E1;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  height: 100%;
+  transition: background 0.3s, color 0.3s;
+}
+body { overflow-x: hidden; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
+::selection { background: var(--accent); color: #000; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--panel-deep); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.mono { font-family: var(--font-mono); }
+
+/* ---------- Navigation ---------- */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
+}
+.brand { display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
+.brand-mark { width: 12px; height: 12px; background: var(--accent); }
+.brand-name { font-weight: 700; letter-spacing: 0.05em; font-size: 16px; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-pill { display: flex; background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 4px; }
+.nav-pill button { 
+  background: transparent; border: none; color: var(--text-2); font-size: 12px; font-weight: 600; 
+  letter-spacing: 0.04em; padding: 6px 16px; border-radius: 20px; text-transform: uppercase;
+}
+.nav-pill button.active { background: var(--accent); color: #000; }
+.theme-toggle {
+  background: var(--panel-elevated); border: 1px solid var(--border); color: var(--text);
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+.page { padding-top: 56px; min-height: 100vh; }
+
+/* ---------- Landing ---------- */
+.hero {
+  position: relative; height: calc(100vh - 56px); min-height: 600px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  overflow: hidden; text-align: center;
+}
+.hero-3d { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; }
+.hero-3d canvas { width: 100%; height: 100%; display: block; }
+.hero-fade { 
+  position: absolute; inset: 0; 
+  background: radial-gradient(ellipse at center, transparent 0%, var(--bg) 80%); 
+}
+.hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 24px; }
+.hero-eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 20px; text-transform: uppercase; font-weight: 600; }
+.hero-title { font-size: clamp(36px, 6vw, 72px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+.hero-sub { font-size: 20px; font-weight: 600; color: var(--text); margin: 0 0 12px; }
+.hero-sub2 { font-size: 16px; color: var(--text-2); margin: 0 auto 48px; max-width: 500px; line-height: 1.6; }
+.hero-choices { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.choice-card {
+  width: 260px; text-align: left; background: var(--panel-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px; transition: border-color 0.2s, transform 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.choice-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.choice-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.1em; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; }
+.choice-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.choice-desc { font-size: 13px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5; }
+
+/* ---------- Buttons & Components ---------- */
+.btn {
+  border: 1px solid var(--border); background: var(--panel); color: var(--text);
+  padding: 12px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; 
+  border-radius: var(--radius); display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.btn:hover { border-color: var(--text-3); }
+.btn-primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.btn-primary:hover { opacity: 0.9; border-color: transparent; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-block { width: 100%; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 48px 24px 96px; }
+.container-narrow { max-width: 680px; margin: 0 auto; padding: 64px 24px 96px; }
+.section-title { font-size: 11px; font-family: var(--font-mono); font-weight: 600; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 8px; text-transform: uppercase; }
+.h1 { font-size: 32px; font-weight: 700; margin: 0 0 12px; }
+.h2 { font-size: 24px; font-weight: 700; margin: 0 0 12px; }
+.lead { color: var(--text-2); font-size: 15px; line-height: 1.6; margin-bottom: 32px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+.panel-deep { background: var(--panel-deep); border: 1px solid var(--border); border-radius: var(--radius); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 11px; font-family: var(--font-mono); font-weight: 600; color: var(--text-2); margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+.field input, .field select {
+  width: 100%; background: var(--panel-deep); border: 1px solid var(--border); color: var(--text);
+  padding: 12px 16px; font-size: 14px; border-radius: var(--radius); font-family: var(--font-sans);
+}
+.field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+
+/* ---------- Badges & Rows ---------- */
+.dna-row {
+  display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; 
+  border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; background: var(--panel);
+}
+.dna-name { font-size: 15px; font-weight: 600; }
+.badge { font-family: var(--font-mono); font-size: 11px; padding: 6px 12px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.badge-claimed { background: var(--panel-deep); color: var(--text-2); border: 1px solid var(--border); }
+.badge-demonstrated { background: var(--badge-ready-bg); color: var(--badge-ready-text); border: 1px solid var(--badge-ready-border); }
+.badge-ready { background: var(--badge-ready-bg); color: var(--badge-ready-text); border: 1px solid var(--badge-ready-border); }
+.badge-near { background: var(--badge-near-bg); color: var(--badge-near-text); border: 1px solid var(--badge-near-border); }
+.badge-not { background: var(--badge-not-bg); color: var(--badge-not-text); border: 1px solid var(--badge-not-border); }
+
+/* ---------- CNC Lab ---------- */
+.lab-wrap { padding-top: 56px; height: 100vh; display: flex; flex-direction: column; }
+.lab-header { padding: 20px 32px; border-bottom: 1px solid var(--border); background: var(--bg); }
+.lab-title { font-size: 20px; font-weight: 700; }
+.lab-sub { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-3); margin-top: 4px; text-transform: uppercase; }
+.task-card {
+  margin-top: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 24px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+}
+.task-flow { display: flex; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 15px; }
+.task-flow .dim { color: var(--text); font-weight: 600; }
+.task-flow .to { color: var(--text-3); }
+.task-flow .target { color: var(--accent); font-weight: 600; }
+.task-controls-hint { color: var(--text-2); font-size: 13px; margin-left: auto; }
+
+.lab-body { flex: 1; display: grid; grid-template-columns: 1fr 360px; overflow: hidden; }
+.viewport { 
+  position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; 
+  background: radial-gradient(circle at 50% 50%, var(--vp-bg-center) 0%, var(--vp-bg-edge) 100%);
+}
+.viewport canvas { width: 100%; height: 100%; display: block; }
+.ov { position: absolute; font-family: var(--font-mono); pointer-events: none; z-index: 10; }
+.ov-box { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.ov-label { font-size: 10px; font-weight: 600; color: var(--text-3); margin-bottom: 4px; text-transform: uppercase; }
+.ov-value { font-size: 15px; font-weight: 600; color: var(--text); }
+.ov-value.accent { color: var(--accent); }
+.ov-tl { top: 24px; left: 24px; }
+.ov-tr { top: 24px; right: 24px; text-align: right; }
+.ov-bl { bottom: 24px; left: 24px; display: flex; gap: 12px; }
+.ov-status {
+  position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em; color: var(--bg); background: var(--accent);
+  padding: 8px 24px; border-radius: 4px; display: none; z-index: 10;
+}
+.ov-status.show { display: block; }
+.orbit-hint { position: absolute; bottom: 24px; right: 24px; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); pointer-events: none; z-index: 10; }
+
+.view-controls { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; background: var(--panel); padding: 4px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.view-controls button { border-radius: 20px; font-size: 11px; padding: 6px 16px; border: none; font-weight: 600; color: var(--text-2); background: transparent; cursor: pointer; transition: all 0.2s; font-family: var(--font-sans); letter-spacing: 0.05em; }
+.view-controls button:hover { background: var(--panel-elevated); color: var(--text); }
+.view-controls button.active { background: var(--panel-deep); color: var(--accent); border: 1px solid var(--accent); }
+
+.controls-pane { border-left: 1px solid var(--border); background: var(--panel-deep); overflow-y: auto; padding: 24px; }
+.tool-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.tool-opt {
+  display: flex; align-items: center; gap: 16px; border: 1px solid var(--border); background: var(--panel);
+  padding: 10px 14px; border-radius: var(--radius); transition: all 0.2s; cursor: pointer;
+}
+.tool-opt:hover { border-color: var(--text-3); }
+.tool-opt.selected { border-color: var(--accent); background: var(--bg); box-shadow: inset 0 0 0 1px var(--accent); }
+.tool-icon { width: 24px; height: 24px; color: var(--text-2); display: flex; align-items: center; justify-content: center; }
+.tool-opt.selected .tool-icon { color: var(--accent); }
+.tool-name { font-size: 13px; font-weight: 600; text-transform: uppercase; }
+
+.slider-block { margin-bottom: 24px; }
+.slider-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.slider-label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-2); }
+.slider-value { font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--accent); }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; background: var(--border); border-radius: 2px; outline: none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); }
+.slider-help { font-size: 12px; color: var(--text-3); margin-top: 8px; }
+
+.order-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.order-item {
+  display: flex; align-items: center; justify-content: space-between; background: var(--panel);
+  border: 1px solid var(--border); padding: 10px 16px; border-radius: var(--radius); font-size: 13px;
+  font-weight: 500;
+}
+.order-num { font-family: var(--font-mono); color: var(--accent); font-weight: 600; margin-right: 12px; }
+.order-btns button { background: none; border: none; color: var(--text-3); font-size: 14px; padding: 4px; }
+.order-btns button:hover { color: var(--text); }
+
+.warn-strip { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: #ff8a8a; background: rgba(255,110,110,0.12); border: 1px solid rgba(255,110,110,0.35); padding: 10px 12px; border-radius: 4px; margin-bottom: 16px; }
+
+.status-bar { border-top: 1px solid var(--border); background: var(--panel); padding: 16px 32px; display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: center; }
+.timeline { display: flex; gap: 0; align-items: center; }
+.tl-step { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; position: relative; }
+.tl-step:not(:last-child)::after { content: ''; position: absolute; top: 6px; left: 55%; width: 90%; height: 2px; background: var(--border); }
+.tl-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--panel); border: 2px solid var(--border); z-index: 1; transition: all 0.2s; }
+.tl-step.active .tl-dot { background: var(--accent); border-color: var(--accent); }
+.tl-step.done .tl-dot { background: var(--text-3); border-color: var(--text-3); }
+.tl-label { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; }
+.tl-step.active .tl-label { color: var(--text); font-weight: 600; }
+.log-panel { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); height: 80px; overflow-y: auto; background: var(--panel-deep); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); }
+.log-line span { color: var(--accent); margin-right: 8px; }
+
+/* ---------- Results ---------- */
+.result-hero { text-align: center; padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.result-diam { font-family: var(--font-mono); font-size: 64px; font-weight: 700; color: var(--text); margin: 16px 0; }
+.result-target { font-family: var(--font-mono); font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
+.score-big { text-align: center; margin-bottom: 32px; }
+.score-num { font-family: var(--font-mono); font-size: 72px; font-weight: 700; color: var(--accent); }
+.score-of { font-size: 24px; color: var(--text-3); }
+
+.breakdown-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.br-label { width: 120px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; }
+.br-bar { flex: 1; height: 8px; background: var(--panel-elevated); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.br-fill { height: 100%; background: var(--accent); }
+.br-val { width: 64px; text-align: right; font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+
+.readiness-banner { text-align: center; padding: 40px 32px; border-radius: var(--radius); border: 1px solid var(--border); margin: 40px 0; }
+.readiness-banner.ready { background: var(--badge-ready-bg); border-color: var(--badge-ready-border); }
+.readiness-banner.near { background: var(--badge-near-bg); border-color: var(--badge-near-border); }
+.readiness-banner.not { background: var(--badge-not-bg); border-color: var(--badge-not-border); }
+.readiness-tag { font-family: var(--font-mono); font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+.readiness-banner.ready .readiness-tag { color: var(--badge-ready-text); }
+.readiness-banner.near .readiness-tag { color: var(--badge-near-text); }
+.readiness-banner.not .readiness-tag { color: var(--badge-not-text); }
+.readiness-desc { color: var(--text-2); font-size: 15px; }
+
+.gap-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--badge-not-text); border-radius: var(--radius); margin-bottom: 32px; }
+.gap-title { font-weight: 700; font-size: 15px; color: var(--badge-not-text); margin-bottom: 4px; }
+
+/* ---------- Retest & Profiles ---------- */
+.retest-flow { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; margin: 40px 0; }
+.retest-card { text-align: center; padding: 32px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); min-width: 200px; }
+.rc-num { font-family: var(--font-mono); font-size: 48px; font-weight: 700; margin-bottom: 8px; }
+.rc-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; }
+.retest-arrow { font-family: var(--font-mono); font-size: 24px; color: var(--text-3); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 48px; }
+.stat-card { padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
+.stat-num { font-family: var(--font-mono); font-size: 36px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+.stat-label { font-size: 12px; font-weight: 600; color: var(--text-2); font-family: var(--font-mono); text-transform: uppercase; }
+.req-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.req-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 500; padding: 8px 16px; border: 1px solid var(--border); border-radius: 24px; color: var(--text-2); background: var(--panel-deep); }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-3); padding: 16px; border-bottom: 2px solid var(--border); text-transform: uppercase; }
+td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+tr.cand-row { cursor: pointer; transition: background 0.2s; }
+tr.cand-row:hover { background: var(--panel); }
+.name-cell { font-weight: 600; font-size: 15px; }
+
+.near-ready-card { padding: 20px; border: 1px solid var(--badge-near-border); background: var(--badge-near-bg); border-radius: var(--radius); margin-bottom: 16px; }
+
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); background: var(--panel-elevated);
+  border: 1px solid var(--accent); color: var(--text); padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 600;
+  font-family: var(--font-sans); z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.toast.show { opacity: 1; }
+.back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-2); font-size: 13px; font-weight: 600; margin-bottom: 24px; font-family: var(--font-mono); text-transform: uppercase; }
+.back-link:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="brand" onclick="goTo('landing')">
+    <div class="brand-mark"></div>
+    <div class="brand-name">KAARYA</div>
+  </div>
+  <div class="nav-right" id="navRight"></div>
+</div>
+
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<!-- Three.js Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+let isLightMode = false;
+function toggleTheme() {
+  isLightMode = !isLightMode;
+  document.documentElement.setAttribute('data-theme', isLightMode ? 'light' : 'dark');
+  renderNav();
+}
+
+const CAPABILITY_NAMES = ["CNC Turning", "Tool Selection", "Parameter Selection", "Process Sequencing", "Dimensional Control"];
+
+const State = {
+  view: 'landing',
+  mode: 'candidate', 
+  candidate: {
+    name: 'Ravi Kumar', education: 'Diploma in Mechanical Engineering', experience: '1 Year',
+    branch: 'Manufacturing', targetRole: 'CNC Machinist', built: false
+  },
+  lab: {
+    tool: 'general', rpm: 1800, feed: 0.18, depth: 0.80, order: ['rough','finish','measure']
+  },
+  attempt1: null,
+  mcqScore: 0,
+  attempt2: null,
+  selectedCandidateId: 'ravi',
+  employerActions: {},
+  currentMsme: null
+};
+
+const MSME_LIST = [
+  { id: 'shuddh', name: 'SHUDDH', url: 'https://shuddh-main-2.vercel.app', domain: 'Waste Management Solutions' },
+  { id: 'rakshak', name: 'RAKSHAK', url: 'https://rakshak-weld.vercel.app', domain: 'Real-time Analytics & Knowledge System' },
+  { id: 'tendrix', name: 'TENDRIX', url: 'https://tendrix-site.vercel.app/#innovations', domain: 'Robotic Arms and Precision Manufacturing' },
+  { id: 'vayunetra', name: 'VAYUNETRA', url: 'https://vayunetra-five.vercel.app', domain: 'Air Quality Indexing Systems' }
+];
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function computeResult(params, bonusPoints = 0) {
+  const toolScoreMap = { finishing: 25, general: 18, roughing: 12 };
+  const toolScore = toolScoreMap[params.tool] || 12;
+  const rpmScore = Math.max(5, 20 - Math.abs(params.rpm - 1800) * 0.015);
+  const feedScore = Math.max(5, 20 - Math.abs(params.feed - 0.18) * 60);
+  const depthScore = Math.max(3, 15 - Math.abs(params.depth - 0.80) * 8);
+  const orderCorrect = params.order.join(',') === 'rough,finish,measure';
+  const processScore = orderCorrect ? 20 : 8;
+  
+  let total = Math.round(toolScore + rpmScore + feedScore + depthScore + processScore) + bonusPoints;
+  total = Math.min(100, Math.max(0, total));
+
+  const depthDeviation = params.depth - 0.80;
+  const feedDeviation = params.feed - 0.18;
+  const rpmDeviation = (params.rpm - 1800) / 1000;
+  let diameter = 50.00 + (bonusPoints > 0 ? 0.02 : 0.04) - depthDeviation * 1.5 + feedDeviation * 0.8 - rpmDeviation * 0.1;
+  if (!orderCorrect) diameter += 0.25;
+  if (params.tool !== 'finishing') diameter += 0.08;
+  diameter = Math.round(diameter * 100) / 100;
+  
+  const withinTolerance = Math.abs(diameter - 50.00) <= 0.05;
+
+  const verified = {
+    "CNC Turning": true,
+    "Tool Selection": toolScore >= 18,
+    "Parameter Selection": (rpmScore + feedScore + depthScore) >= 40 || bonusPoints > 0,
+    "Process Sequencing": orderCorrect,
+    "Dimensional Control": withinTolerance
+  };
+  const verifiedCount = Object.values(verified).filter(Boolean).length;
+
+  let readiness = 'NOT READY';
+  if (total >= 88) readiness = 'READY'; 
+  else if (total >= 70) readiness = 'NEAR-READY';
+
+  let gap = null;
+  if (!withinTolerance || !orderCorrect) gap = "Precision Machining & Quality Control";
+  else if (toolScore < 20) gap = "Tooling Optimization";
+
+  return {
+    params: JSON.parse(JSON.stringify(params)),
+    toolScore: Math.round(toolScore), rpmScore: Math.round(rpmScore), feedScore: Math.round(feedScore),
+    depthScore: Math.round(depthScore), processScore, total, diameter, withinTolerance,
+    orderCorrect, verified, verifiedCount, readiness,
+    capabilityMatch: Math.min(100, total + 8),
+    gap: gap
+  };
+}
+
+const SEED = {
+  arun: { name: 'Arun', role: 'CNC Machinist', params: { tool: 'finishing', rpm: 1750, feed: 0.19, depth: 0.75, order: ['rough','finish','measure'] } },
+  kiran: { name: 'Kiran', role: 'CNC Machinist', params: { tool: 'roughing', rpm: 2600, feed: 0.35, depth: 0.30, order: ['finish','rough','measure'] } },
+  meena: { name: 'Meena', role: 'CNC Machinist', params: { tool: 'general', rpm: 1950, feed: 0.23, depth: 0.95, order: ['rough','finish','measure'] } }
+};
+Object.keys(SEED).forEach(k => { SEED[k].result = computeResult(SEED[k].params); });
+
+function goTo(view, extra) {
+  State.view = view;
+  if (extra) Object.assign(State, extra);
+  render();
+  window.scrollTo(0, 0);
+}
+function setMode(m) { 
+  State.mode = m; 
+  if (m === 'candidate') {
+    goTo(candidateHomeView());
+  } else {
+    goTo(State.currentMsme ? 'msme-dashboard' : 'msme-select');
+  }
+}
+function candidateHomeView() {
+  if (!State.candidate.built) return 'onboarding';
+  if (!State.attempt1) return 'skilldna';
+  if (State.attempt2) return 'profile';
+  return 'readiness';
+}
+
+function render() {
+  renderNav();
+  const app = document.getElementById('app');
+  if(!app) return;
+  const views = {
+    'landing': viewLanding, 'onboarding': viewOnboarding, 'skilldna': viewSkillDNA,
+    'lab': viewLab, 'result': viewResult, 'readiness': viewReadiness,
+    'upskill': viewUpskill, 'mcq': viewMCQ, 'retest': viewRetest,
+    'profile': viewProfile, 'msme-dashboard': viewMsmeDashboard, 'msme-report': viewMsmeReport,
+    'msme-select': viewMsmeSelect, 'msme-onboard': viewMsmeOnboard
+  };
+  const fn = views[State.view] || viewLanding;
+  app.innerHTML = fn();
+  afterRender();
+}
+
+function renderNav() {
+  const nr = document.getElementById('navRight');
+  if (!nr) return;
+  
+  const showSwitch = State.candidate.built;
+  nr.innerHTML = `
+    ${showSwitch ? `
+    <div class="nav-pill">
+      <button class="${State.mode === 'candidate' ? 'active' : ''}" onclick="setMode('candidate')">CANDIDATE</button>
+      <button class="${State.mode === 'msme' ? 'active' : ''}" onclick="setMode('msme')">MSME</button>
+    </div>` : ''}
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+      ${isLightMode ? '🌙' : '☀️'}
+    </button>
+  `;
+}
+
+function viewLanding() {
+  return `
+  <div class="page">
+    <div class="hero">
+      <div class="hero-3d" id="heroMachineHost"></div>
+      <div class="hero-fade"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">INDUSTRIAL SKILL VERIFICATION</div>
+        <h1 class="hero-title">Validate practical capability.</h1>
+        <p class="hero-sub2">Candidates execute technical tasks in a simulated industrial environment, providing employers with verified evidence of their skills.</p>
+        <div class="hero-choices">
+          <div class="choice-card">
+            <div class="choice-label">FOR CANDIDATES</div>
+            <div class="choice-title">Demonstrate Capability</div>
+            <div class="choice-desc">Prove your technical skills in a live virtual assessment.</div>
+            <button class="btn btn-primary btn-block" onclick="goTo('onboarding')">ENTER WORKSPACE</button>
+          </div>
+          <div class="choice-card">
+            <div class="choice-label">FOR MSMEs</div>
+            <div class="choice-title">Hire with Evidence</div>
+            <div class="choice-desc">Access talent ranked by proven, objective capability.</div>
+            <button class="btn btn-block" onclick="setMode('msme')">ENTER PORTAL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function viewOnboarding() {
+  const c = State.candidate;
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">CANDIDATE: SETUP</div>
+    <h1 class="h1">Build Your Profile</h1>
+    <p class="lead">Enter your basic details. The rest of your profile will be built entirely on proven capability.</p>
+    
+    <div class="panel">
+      <div class="field"><label>NAME</label><input id="f-name" value="${c.name}"></div>
+      <div class="grid-2">
+        <div class="field"><label>EDUCATION</label><input id="f-edu" value="${c.education}"></div>
+        <div class="field"><label>EXPERIENCE</label><input id="f-exp" value="${c.experience}"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>INDUSTRY BRANCH</label><input id="f-branch" value="${c.branch}"></div>
+        <div class="field"><label>TARGET ROLE</label><input id="f-role" value="${c.targetRole}"></div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitOnboarding()">SAVE & PROCEED</button>
+    </div>
+  </div></div>`;
+}
+
+function submitOnboarding() {
+  State.candidate.name = document.getElementById('f-name').value || 'Candidate';
+  State.candidate.education = document.getElementById('f-edu').value;
+  State.candidate.experience = document.getElementById('f-exp').value;
+  State.candidate.branch = document.getElementById('f-branch').value;
+  State.candidate.targetRole = document.getElementById('f-role').value;
+  State.candidate.built = true;
+  goTo('skilldna');
+}
+
+function viewSkillDNA() {
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">CANDIDATE: ASSESSMENT</div>
+    <h1 class="h1">Capability Baseline</h1>
+    <p class="lead">Based on your role, these are the core skills expected. Currently, they are only claimed.</p>
+    ${CAPABILITY_NAMES.map(n => `
+      <div class="dna-row">
+        <div class="dna-name">${n}</div>
+        <div class="badge badge-claimed">UNVERIFIED CLAIM</div>
+      </div>`).join('')}
+    <div class="claim-note" style="margin-top:24px; padding:16px; border:1px dashed var(--border); background:var(--panel-deep); font-size:13px; color:var(--text-2);">
+      <strong>Note:</strong> Anyone can list skills on a resume. To stand out to employers on KAARYA, you must complete the practical simulation to verify your competence.
+    </div>
+    <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="goTo('lab')">START VIRTUAL ASSESSMENT</button>
+  </div></div>`;
+}
+
+const TOOL_ICONS = {
+  roughing: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20L14 10M14 10L18 6L20 8L16 12M14 10L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  finishing: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20L12 12M12 12L18 6L20 8L14 14M12 12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  general: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20L13 11M13 11L17 7L19 9L15 13M13 11L15 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+const TOOL_LABELS = { roughing: 'ROUGHING TOOL', finishing: 'FINISHING TOOL', general: 'GENERAL TURNING TOOL' };
+const ORDER_LABELS = { rough: 'ROUGHING PASS', finish: 'FINISHING PASS', measure: 'MEASUREMENT' };
+
+function viewLab() {
+  const L = State.lab;
+  const warnings = [];
+  if (L.rpm > 2600) warnings.push('WARNING: RPM is unusually high.');
+  if (L.depth > 1.5) warnings.push('WARNING: Depth of cut risks tool damage.');
+  const isSecondAttempt = !!State.attempt1;
+  
+  return `
+  <div class="lab-wrap">
+    <div class="lab-header">
+      <div class="lab-title">Virtual Machining Center ${isSecondAttempt ? '(Attempt 2)' : ''}</div>
+      <div class="lab-sub">PRACTICAL ASSESSMENT · EXTERNAL CYLINDRICAL TURNING</div>
+      <div class="task-card">
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">YOUR TASK</div>
+          <div class="task-flow">
+            <span class="dim">Ø55.00 mm</span><span class="to">→</span><span class="target">Ø50.00 ±0.05 mm</span>
+          </div>
+        </div>
+        <div class="task-controls-hint">Configure tooling and parameters, sequence the operations, and execute the cycle.</div>
+      </div>
+    </div>
+    <div class="lab-body">
+      <div class="viewport" id="viewportHost">
+        <div class="ov ov-tl">
+          <div class="ov-box"><div class="ov-label">STOCK DIAMETER</div><div class="ov-value" id="ovWorkpiece">Ø55.00 mm</div></div>
+        </div>
+        <div class="ov ov-tr">
+          <div class="ov-box"><div class="ov-label">TARGET DIAMETER</div><div class="ov-value accent">Ø50.00 ±0.05 mm</div></div>
+        </div>
+        <div class="ov ov-bl">
+          <div class="ov-box"><div class="ov-label">LIVE READING</div><div class="ov-value" id="ovCurrent">Ø55.00 mm</div></div>
+        </div>
+        <div class="ov-status" id="ovStatus">EXECUTING PROGRAM</div>
+        <div class="view-controls">
+          <button onclick="Machine.setCameraView('iso')" class="active" id="btn-cam-iso">ISO</button>
+          <button onclick="Machine.setCameraView('front')" id="btn-cam-front">FRONT</button>
+          <button onclick="Machine.setCameraView('top')" id="btn-cam-top">TOP</button>
+        </div>
+        <div class="orbit-hint">DRAG TO ORBIT · SCROLL TO ZOOM</div>
+      </div>
+      
+      <div class="controls-pane">
+        <div class="section-title">MACHINE CONFIGURATION</div>
+
+        <div style="margin-top:24px; margin-bottom:12px; font-weight:600; font-size:12px; text-transform:uppercase; color:var(--text-2);">1. Tool Selection</div>
+        <div class="tool-grid">
+          ${Object.keys(TOOL_LABELS).map(k => `
+            <div class="tool-opt ${L.tool === k ? 'selected' : ''}" onclick="setLab('tool','${k}')">
+              <div class="tool-icon">${TOOL_ICONS[k]}</div>
+              <div class="tool-name">${TOOL_LABELS[k]}</div>
+            </div>`).join('')}
+        </div>
+
+        <div style="margin-bottom:12px; font-weight:600; font-size:12px; text-transform:uppercase; color:var(--text-2);">2. Cutting Parameters</div>
+        <div class="slider-block">
+          <div class="slider-top"><span class="slider-label">SPINDLE SPEED</span><span class="slider-value" id="rpmVal">${L.rpm} RPM</span></div>
+          <input type="range" min="500" max="3000" step="50" value="${L.rpm}" oninput="setLab('rpm', this.value)">
+          <div class="slider-help">Controls rotational speed of the workpiece.</div>
+        </div>
+        <div class="slider-block">
+          <div class="slider-top"><span class="slider-label">FEED RATE</span><span class="slider-value" id="feedVal">${L.feed.toFixed(2)} mm/rev</span></div>
+          <input type="range" min="0.05" max="0.40" step="0.01" value="${L.feed}" oninput="setLab('feed', this.value)">
+          <div class="slider-help">Controls tool advancement per revolution.</div>
+        </div>
+        <div class="slider-block">
+          <div class="slider-top"><span class="slider-label">DEPTH OF CUT</span><span class="slider-value" id="depthVal">${L.depth.toFixed(2)} mm</span></div>
+          <input type="range" min="0.10" max="2.00" step="0.05" value="${L.depth}" oninput="setLab('depth', this.value)">
+          <div class="slider-help">Controls material removal per pass.</div>
+        </div>
+
+        <div style="margin-bottom:12px; font-weight:600; font-size:12px; text-transform:uppercase; color:var(--text-2);">3. Process Order</div>
+        <div class="order-list" id="orderList"></div>
+
+        ${warnings.length > 0 ? `<div class="warn-strip">${warnings.join('<br>')}</div>` : ''}
+
+        <button class="btn btn-primary btn-block" id="runBtn" onclick="runMachine()" style="margin-top:16px;">EXECUTE CYCLE</button>
+      </div>
+    </div>
+    
+    <div class="status-bar">
+      <div class="timeline" id="timeline"></div>
+      <div class="log-panel" id="logPanel"><div style="font-weight:600; margin-bottom:8px; color:var(--text-3); font-size:10px; text-transform:uppercase;">System Log</div><div id="logLines"></div></div>
+    </div>
+  </div>`;
+}
+
+function renderOrderList() {
+  const el = document.getElementById('orderList'); 
+  if (!el) return;
+  el.innerHTML = State.lab.order.map((k, i) => `
+    <div class="order-item">
+      <div style="display:flex; align-items:center;">
+        <span class="order-num">${i + 1}</span>
+        <span>${ORDER_LABELS[k]}</span>
+      </div>
+      <div class="order-btns">
+        <button ${i === 0 ? 'disabled style="opacity:0.3"' : ''} onclick="moveOrder(${i},-1)">▲</button>
+        <button ${i === State.lab.order.length - 1 ? 'disabled style="opacity:0.3"' : ''} onclick="moveOrder(${i},1)">▼</button>
+      </div>
+    </div>`).join('');
+}
+function moveOrder(i, dir) {
+  const arr = State.lab.order; const j = i + dir;
+  if (j < 0 || j >= arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  renderOrderList();
+}
+function setLab(key, val) {
+  if (key === 'rpm') { State.lab.rpm = parseInt(val); document.getElementById('rpmVal').textContent = State.lab.rpm + ' RPM'; }
+  if (key === 'feed') { State.lab.feed = parseFloat(val); document.getElementById('feedVal').textContent = State.lab.feed.toFixed(2) + ' mm/rev'; }
+  if (key === 'depth') { State.lab.depth = parseFloat(val); document.getElementById('depthVal').textContent = State.lab.depth.toFixed(2) + ' mm'; }
+  if (key === 'tool') { 
+    State.lab.tool = val; 
+    if (typeof Machine !== 'undefined' && Machine.setTool) Machine.setTool(val);
+    render(); 
+  }
+  
+  if(key === 'rpm' || key === 'depth') {
+     const runBtn = document.getElementById('runBtn');
+     if(runBtn && !machineRunning) render(); 
+  }
+}
+
+const TIMELINE = [
+  { key: 'init', label: 'INITIALIZING' },
+  { key: 'spindle', label: 'SPINDLE' },
+  { key: 'rough', label: 'ROUGHING' },
+  { key: 'finish', label: 'FINISHING' },
+  { key: 'measure', label: 'INSPECTION' },
+  { key: 'complete', label: 'COMPLETE' }
+];
+
+function renderTimeline(activeIdx, doneUpTo) {
+  const el = document.getElementById('timeline'); 
+  if (!el) return;
+  el.innerHTML = TIMELINE.map((s, i) => `
+    <div class="tl-step ${i === activeIdx ? 'active' : ''} ${doneUpTo !== undefined && i < doneUpTo ? 'done' : ''}">
+      <div class="tl-dot"></div><div class="tl-label">${s.label}</div>
+    </div>`).join('');
+}
+
+function appendLog(line) {
+  const el = document.getElementById('logLines'); 
+  if (!el) return;
+  const time = new Date().toTimeString().slice(0, 8);
+  const div = document.createElement('div');
+  div.className = 'log-line';
+  div.innerHTML = `<span>[${time}]</span> ${line}`;
+  el.appendChild(div);
+  el.parentElement.scrollTop = el.parentElement.scrollHeight;
+}
+
+let machineRunning = false;
+async function runMachine() {
+  if (machineRunning) return;
+  machineRunning = true;
+  
+  const runBtn = document.getElementById('runBtn');
+  if (runBtn) {
+    runBtn.disabled = true;
+    runBtn.textContent = 'EXECUTING...';
+  }
+  
+  document.querySelectorAll('.controls-pane input, .tool-opt, .order-btns button').forEach(e => e.style.pointerEvents = 'none');
+
+  const bonus = (State.attempt1 && State.mcqScore !== undefined) ? (State.mcqScore * 3) : 0;
+  const result = computeResult(State.lab, bonus);
+  
+  const ovStatus = document.getElementById('ovStatus');
+  if (ovStatus) ovStatus.classList.add('show');
+
+  renderTimeline(0);
+  appendLog('G-Code program generated and loaded.');
+  
+  await Machine.play(result, (phaseIdx, label) => {
+    renderTimeline(phaseIdx, phaseIdx);
+    if (ovStatus) ovStatus.textContent = label;
+    if (label === 'SPINDLE START') appendLog(`Tool: ${TOOL_LABELS[result.params.tool]} mounted. Spindle engaged at ${result.params.rpm} RPM.`);
+    if (label === 'ROUGHING') appendLog('Executing roughing pass...');
+    if (label === 'FINISHING') appendLog('Executing finishing pass...');
+    if (label === 'MEASURING') appendLog('Engaging probe for final measurement...');
+    if (label === 'COMPLETE') appendLog(`Cycle completed. Final measurement: Ø${result.diameter.toFixed(2)} mm.`);
+  }, (diam) => {
+    const ovCurrent = document.getElementById('ovCurrent');
+    if(ovCurrent) ovCurrent.textContent = 'Ø' + diam.toFixed(2) + ' mm';
+  });
+
+  machineRunning = false;
+  await new Promise(r => setTimeout(r, 1200));
+  
+  if (!State.attempt1) {
+    State.attempt1 = result;
+    goTo('result');
+  } else {
+    State.attempt2 = result;
+    goTo('retest');
+  }
+}
+
+function viewResult() {
+  const r = State.attempt1;
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">ASSESSMENT RESULT</div>
+    <div class="result-hero">
+      <div class="lead" style="margin-bottom:8px; font-weight:600; text-transform:uppercase;">Operation Completed</div>
+      <div class="result-diam mono">Ø${r.diameter.toFixed(2)} mm</div>
+      <div class="result-target">TARGET: Ø50.00 ±0.05 mm</div>
+      <div style="margin-top:24px;">
+        <span class="badge ${r.withinTolerance ? 'badge-ready' : 'badge-not'}">
+          ${r.withinTolerance ? 'WITHIN ENGINEERING TOLERANCE' : 'OUT OF TOLERANCE LIMITS'}
+        </span>
+      </div>
+    </div>
+    
+    <div class="score-big">
+      <div class="section-title" style="margin-bottom:12px;">PRACTICAL CAPABILITY SCORE</div>
+      <div class="score-num mono">${r.total}<span class="score-of">/100</span></div>
+    </div>
+    
+    <div class="panel">
+      ${breakdownRow('TOOLING', r.toolScore, 25)}
+      ${breakdownRow('SPEED (RPM)', r.rpmScore, 20)}
+      ${breakdownRow('FEED RATE', r.feedScore, 20)}
+      ${breakdownRow('DEPTH', r.depthScore, 15)}
+      ${breakdownRow('SEQUENCING', r.processScore, 20)}
+    </div>
+    <button class="btn btn-primary btn-block" style="margin-top:32px;" onclick="goTo('readiness')">VIEW VERIFIED SKILLS</button>
+  </div></div>`;
+}
+
+function breakdownRow(label, val, max) {
+  return `<div class="breakdown-row">
+    <div class="br-label">${label}</div>
+    <div class="br-bar"><div class="br-fill" style="width:${(val / max * 100)}%"></div></div>
+    <div class="br-val mono">${val} / ${max}</div>
+  </div>`;
+}
+
+function viewReadiness() {
+  const r = State.attempt1;
+  const isReady = r.readiness === 'READY';
+  const isNear = r.readiness === 'NEAR-READY';
+  const cls = isReady ? 'ready' : (isNear ? 'near' : 'not');
+  
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">CAPABILITY PROFILE</div>
+    <h1 class="h1">Verified Evidence</h1>
+    <p class="lead">Employers trust evidence over claims. Here is what you successfully demonstrated in the virtual environment.</p>
+    
+    <div style="margin-bottom:40px;">
+      ${CAPABILITY_NAMES.map(n => `
+        <div class="dna-row">
+          <div class="dna-name">${n}</div>
+          <div class="badge ${r.verified[n] ? 'badge-demonstrated' : 'badge-claimed'}">${r.verified[n] ? 'VERIFIED' : 'UNVERIFIED'}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="readiness-banner ${cls}">
+      <div class="readiness-tag mono">${r.readiness}</div>
+      <div class="readiness-desc">
+        ${isReady ? 'Your skills match industry standards. You are ready to be matched with employers.' : 
+          isNear ? 'You are extremely close to meeting industry standards. A minor adjustment is needed.' : 
+          'You need focused practice on core machining principles to meet industry requirements.'}
+      </div>
+    </div>
+
+    ${r.gap ? `
+    <div class="gap-card">
+      <div>
+        <div class="gap-title">Identified Capability Gap</div>
+        <div style="color:var(--text-2); font-size:14px;">${r.gap}</div>
+      </div>
+    </div>` : ''}
+
+    <button class="btn btn-primary btn-block" onclick="goTo('${r.gap ? 'upskill' : 'profile'}')">
+      ${r.gap ? 'PROCEED TO KNOWLEDGE CHECK' : 'VIEW FINAL PROFILE'}
+    </button>
+  </div></div>`;
+}
+
+function viewUpskill() {
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">TARGETED INTERVENTION</div>
+    <h1 class="h1">Bridge Your Skill Gap</h1>
+    <p class="lead">Review this standard reference material on machining parameters and dimensional control, then complete the knowledge check.</p>
+    <div class="panel" style="margin-bottom:32px;">
+      <div class="section-title">REFERENCE MATERIAL</div>
+      <div class="h2" style="font-size:20px;">Computer Integrated Manufacturing Principles</div>
+      <p style="color:var(--text-2); font-size:14px; margin-bottom:24px;">Review proper tooling selection, spindle speed formulation, and process sequencing to ensure tight tolerances.</p>
+      
+      <button class="btn btn-block" style="margin-bottom:24px;" onclick="window.open('https://www.youtube.com/playlist?list=PLFW6lRTa1g808_CfYhZKdv2eXplAQiAwS','_blank');">OPEN FULL MODULE IN NEW TAB</button>
+      
+      <div style="border-top:1px solid var(--border); padding-top:24px;">
+        <button class="btn btn-primary btn-block" onclick="goTo('mcq')">PROCEED TO KNOWLEDGE CHECK</button>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function viewMCQ() {
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">KNOWLEDGE CHECK</div>
+    <h1 class="h1">Verify Engineering Logic</h1>
+    <p class="lead">Answer these questions tailored to your specific capability gaps. You will then manually reconfigure the CNC machine for your final run.</p>
+    
+    <div class="panel" id="mcq-container">
+      <form id="mcqForm" onsubmit="submitDynamicMCQ(event)">
+        <div class="field"><label>1. Which tooling approach is standard for achieving the final accurate dimension?</label><select name="q1" required><option value="">Select...</option><option value="1">Utilize a finishing tool with appropriate conservative feed rates.</option><option value="0">Utilize a roughing tool at maximum spindle speed.</option></select></div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">SUBMIT & RECONFIGURE MACHINE</button>
+      </form>
+    </div>
+  </div></div>`;
+}
+
+function submitDynamicMCQ(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  let score = 0;
+  for (let [key, value] of fd.entries()) {
+    if(value === '1') score += 1;
+  }
+  State.mcqScore = score;
+  toast('Knowledge check complete. Please manually configure the machine for Attempt 02.');
+  goTo('lab');
+}
+
+function viewRetest() {
+  const a1 = State.attempt1;
+  const a2 = State.attempt2;
+  return `
+  <div class="page"><div class="container-narrow">
+    <div class="section-title">FINAL REASSESSMENT RESULT</div>
+    <h1 class="h1">Execution Complete</h1>
+    <p class="lead">You have completed your final virtual simulation. Your verified capability score has been logged.</p>
+    
+    <div class="retest-flow">
+      <div class="retest-card">
+        <div class="rc-num mono">${a1.total}</div>
+        <div class="rc-tag mono">ATTEMPT 1 · ${a1.readiness}</div>
+      </div>
+      <div class="retest-arrow">→</div>
+      <div class="retest-card" style="border-color: ${a2.readiness==='READY' ? 'var(--badge-ready-border)' : 'var(--border)'};">
+        <div class="rc-num mono" id="retestNum">${a2.total}</div>
+        <div class="rc-tag mono" id="retestTag">FINAL · ${a2.readiness}</div>
+      </div>
+    </div>
+    
+    <div id="retestAction" style="margin-top:32px;">
+      <button class="btn btn-primary btn-block" onclick="goTo('profile')">VIEW CANDIDATE PROFILE</button>
+    </div>
+  </div></div>`;
+}
+
+function viewProfile() {
+  const c = State.candidate, r = State.attempt2 || State.attempt1;
+  const isReady = r.readiness === 'READY';
+  const cls = isReady ? 'badge-ready' : r.readiness === 'NEAR-READY' ? 'badge-near' : 'badge-not';
+  
+  const opps = [
+    { name: 'CNC Machinist', org: 'Precision Auto Components Pvt Ltd', loc: 'Chennai' },
+    { name: 'CNC Turning Operator', org: 'Chennai Tooling Works', loc: 'Chennai' },
+    { name: 'Junior Machinist', org: 'Vantage Precision Engineering', loc: 'Coimbatore' }
+  ];
+
+  return `
+  <div class="page"><div class="container">
+    <div class="section-title">VERIFIED PROFILE</div>
+    
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px; padding:32px; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); margin-bottom:32px;">
+      <div>
+        <div style="font-size:32px; font-weight:700; margin-bottom:8px;">${c.name}</div>
+        <div style="color:var(--text-2); font-size:16px;">${c.targetRole}</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="mono" style="font-size:48px; font-weight:700; color:var(--text); margin-bottom:8px;">${r.total}<span style="font-size:24px; color:var(--text-3);">/100</span></div>
+        <div class="badge ${cls}" style="font-size:14px; padding:8px 16px;">${r.readiness}</div>
+      </div>
+    </div>
+    
+    <div class="grid-2">
+      <div class="panel">
+        <div class="section-title">VERIFIED CAPABILITIES</div>
+        ${CAPABILITY_NAMES.map(n => `<div class="dna-row"><div class="dna-name">${n}</div><div class="badge ${r.verified[n] ? 'badge-demonstrated' : 'badge-not'}">${r.verified[n] ? 'VERIFIED' : 'PENDING'}</div></div>`).join('')}
+      </div>
+      <div class="panel">
+        <div class="section-title">MATCHED EMPLOYER OPPORTUNITIES</div>
+        ${isReady ? opps.map(o => `
+          <div style="padding:20px; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel-deep); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div><div style="font-weight:600; font-size:15px; margin-bottom:4px;">${o.name}</div><div style="color:var(--text-2); font-size:13px;">${o.org} ·${o.loc}</div></div>
+            <span class="badge badge-ready">STRONG MATCH</span>
+          </div>`).join('') : `
+          <div style="padding:24px; text-align:center; color:var(--text-2); border:1px dashed var(--border); border-radius:var(--radius);">
+            Improve your score to READY to unlock direct employer matching.
+          </div>
+        `}
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function viewMsmeSelect() {
+  return `
+  <div class="page"><div class="container">
+    <div class="section-title">Real-time Analytics & Knowledge System</div>
+    <h1 class="h1">Select Your Enterprise</h1>
+    <p class="lead">Log in to your MSME workspace or register a new enterprise to access verified talent.</p>
+
+    <div class="grid-2" style="margin-bottom: 40px;">
+      ${MSME_LIST.map(m => `
+        <div class="panel" style="display:flex; flex-direction:column; justify-content:space-between; padding:24px;">
+          <div>
+            <h2 class="h2" style="margin-bottom:4px;">${m.name}</h2>
+            <div style="color:var(--text-2); font-size:14px; margin-bottom:24px;">${m.domain}</div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn btn-primary" style="flex:1; min-width:140px;" onclick="selectMsme('${m.id}')">SELECT & PROCEED</button>
+            <button class="btn" style="flex:1; min-width:140px;" onclick="window.open('${m.url}', '_blank')">VISIT SITE ↗</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="panel-deep" style="text-align:center; padding: 48px; border: 1px dashed var(--border);">
+       <h2 class="h2">New to KAARYA?</h2>
+       <p style="color:var(--text-2); margin-bottom:24px;">Register your MSME to start hiring evidence-backed talent.</p>
+       <button class="btn btn-primary" onclick="goTo('msme-onboard')">ONBOARD NEW MSME</button>
+    </div>
+  </div></div>`;
+}
+
+function selectMsme(id) {
+  const msme = MSME_LIST.find(m => m.id === id) || MSME_LIST[0];
+  State.currentMsme = msme;
+  goTo('msme-dashboard');
+}
+
+function viewMsmeOnboard() {
+  return `
+  <div class="page"><div class="container-narrow">
+    <a class="back-link" onclick="goTo('msme-select')">← BACK TO SELECTION</a>
+    <div class="section-title">MSME REGISTRATION</div>
+    <h1 class="h1">Onboard Your Enterprise</h1>
+    <p class="lead">Provide your MSME details to unlock access to the verified talent pool.</p>
+
+    <div class="panel">
+      <div class="field"><label>UDYAM REGISTRATION NUMBER</label><input id="m-reg" placeholder="e.g. UDYAM-XX-00-0000000"></div>
+      <div class="field"><label>MSME NAME</label><input id="m-name" placeholder="Enter full legal name"></div>
+      <div class="field"><label>INDUSTRY DOMAIN</label><input id="m-domain" placeholder="e.g. Precision Manufacturing, Clean Tech"></div>
+      <div class="grid-2">
+        <div class="field">
+          <label>ANNUAL TURNOVER</label>
+          <select id="m-turnover">
+            <option>Micro (Up to ₹5 Cr)</option>
+            <option>Small (₹5 Cr - ₹50 Cr)</option>
+            <option>Medium (₹50 Cr - ₹250 Cr)</option>
+          </select>
+        </div>
+        <div class="field"><label>WORKFORCE SIZE</label><input type="number" id="m-size" placeholder="e.g. 50"></div>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="submitMsmeOnboard()">COMPLETE REGISTRATION & PROCEED</button>
+    </div>
+  </div></div>`;
+}
+
+function submitMsmeOnboard() {
+  const name = document.getElementById('m-name').value || 'New MSME Enterprise';
+  const domain = document.getElementById('m-domain').value || 'Manufacturing';
+  State.currentMsme = { id: 'new', name, domain, url: '#' };
+  toast('MSME Successfully Onboarded');
+  goTo('msme-dashboard');
+}
+
+function viewMsmeDashboard() {
+  const cands = getAllCandidates();
+  const readyCount = cands.filter(c => c.result.readiness === 'READY').length;
+  const nearCount = cands.filter(c => c.result.readiness === 'NEAR-READY').length;
+  const msmeName = State.currentMsme ? State.currentMsme.name : 'EMPLOYER';
+  
+  return `
+  <div class="page"><div class="container">
+    <a class="back-link" onclick="goTo('msme-select')">← SWITCH MSME</a>
+    <div class="section-title">MSME PORTAL • ${msmeName}</div>
+    <h1 class="h1">Hire on Evidence. Not Claims.</h1>
+    
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">OPEN ROLES</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--badge-ready-text);">${readyCount}</div><div class="stat-label">READY CANDIDATES</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--badge-near-text);">${nearCount}</div><div class="stat-label">NEAR-READY TALENT</div></div>
+      <div class="stat-card"><div class="stat-num">34</div><div class="stat-label">TOTAL ASSESSED</div></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:40px; border-left: 4px solid var(--accent);">
+      <div class="section-title">ACTIVE REQUIREMENT</div>
+      <div class="h2">CNC Machinist</div>
+      <div class="req-tags">
+        ${CAPABILITY_NAMES.map(n => `<div class="req-tag">${n}</div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-title">VERIFIED CANDIDATE POOL</div>
+    <div class="panel-deep" style="overflow-x:auto; margin-bottom:48px;">
+      <table>
+        <thead><tr><th>CANDIDATE</th><th>PRACTICAL SCORE</th><th>CAPABILITY MATCH</th><th>VERIFIED</th><th>IDENTIFIED GAPS</th><th>STATUS</th></tr></thead>
+        <tbody>
+          ${cands.map(c => candidateRow(c)).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">NEAR-READY TALENT</div>
+    <p class="lead" style="margin-bottom:24px;">Candidates who demonstrate high potential but require minor, targeted upskilling.</p>
+    ${cands.filter(c => c.result.readiness === 'NEAR-READY').map(c => `
+      <div class="near-ready-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <span style="font-weight:700; font-size:16px; margin-right:12px;">${c.name}</span>
+            <span class="mono" style="color:var(--text-2); margin-right:12px;">Score: ${c.result.total}/100</span>
+            <span style="font-size:13px;">GAP: <strong>${c.result.gap || 'N/A'}</strong></span>
+          </div>
+          <div style="color:var(--text-2); font-size:13px; font-weight:600; text-transform:uppercase;">
+            Recommended: Guided Module + Reassessment
+          </div>
+        </div>
+      </div>`).join('')}
+  </div></div>`;
+}
+
+function getAllCandidates() {
+  const list = [];
+  if (State.candidate.built && (State.attempt1 || State.attempt2)) {
+    list.push({ id: 'ravi', name: State.candidate.name, result: State.attempt2 || State.attempt1 });
+  }
+  Object.keys(SEED).forEach(id => list.push({ id, name: SEED[id].name, result: SEED[id].result }));
+  return list.sort((a,b) => b.result.total - a.result.total);
+}
+
+function candidateRow(c) {
+  const r = c.result;
+  const cls = r.readiness === 'READY' ? 'badge-ready' : r.readiness === 'NEAR-READY' ? 'badge-near' : 'badge-not';
+  return `<tr class="cand-row" onclick="openReport('${c.id}')">
+    <td class="name-cell">${c.name}</td>
+    <td class="mono" style="font-weight:600;">${r.total}</td>
+    <td class="mono">${r.capabilityMatch}%</td>
+    <td class="mono">${r.verifiedCount}/5</td>
+    <td style="color:var(--text-2); font-size:13px;">${r.gap || 'None'}</td>
+    <td><span class="badge ${cls}">${r.readiness}</span></td>
+  </tr>`;
+}
+
+function openReport(id) {
+  State.selectedCandidateId = id;
+  goTo('msme-report');
+}
+
+function getCandidateById(id) {
+  if (id === 'ravi') return { id, name: State.candidate.name, role: State.candidate.targetRole, result: State.attempt2 || State.attempt1 };
+  const s = SEED[id];
+  return { id, name: s.name, role: s.role, result: s.result };
+}
+
+function viewMsmeReport() {
+  const c = getCandidateById(State.selectedCandidateId);
+  const r = c.result;
+  const cls = r.readiness === 'READY' ? 'badge-ready' : r.readiness === 'NEAR-READY' ? 'badge-near' : 'badge-not';
+  const acted = State.employerActions[c.id] || {};
+  
+  return `
+  <div class="page"><div class="container">
+    <a class="back-link" onclick="goTo('msme-dashboard')">← BACK TO POOL</a>
+    
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px; margin-bottom:32px;">
+      <div>
+        <h1 class="h1" style="margin-bottom:4px;">${c.name}</h1>
+        <div style="color:var(--text-2); font-size:16px;">${c.role}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="mono" style="font-size:36px; font-weight:700; color:var(--text); margin-bottom:8px;">${r.total}<span style="font-size:18px; color:var(--text-3);">/100</span></div>
+        <div class="badge ${cls}">${r.readiness}</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="section-title">VERIFIED SKILLS (SIMULATION DATA)</div>
+        ${CAPABILITY_NAMES.map(n => `<div class="dna-row"><div class="dna-name">${n}</div><div class="badge ${r.verified[n] ? 'badge-demonstrated' : 'badge-not'}">${r.verified[n] ? 'VERIFIED' : 'FAILED'}</div></div>`).join('')}
+      </div>
+      <div class="panel">
+        <div class="section-title">PRACTICAL ASSESSMENT SUMMARY</div>
+        <div class="dna-row"><div>Operation</div><div class="mono">External Turning</div></div>
+        <div class="dna-row"><div>Stock</div><div class="mono">Ø55.00 mm</div></div>
+        <div class="dna-row"><div>Target</div><div class="mono">Ø50.00 ±0.05 mm</div></div>
+        <div class="dna-row"><div>Achieved</div><div class="mono" style="font-weight:700;">Ø${r.diameter.toFixed(2)} mm</div></div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:48px;">SIMULATION REPLAY</div>
+    <div class="panel" style="padding:24px;">
+      <button class="btn btn-primary" onclick="replayAssessment('${c.id}')">▶ WATCH CANDIDATE EXECUTION</button>
+      <div class="viewport" id="replayViewportHost" style="height:400px; margin-top:24px; border:1px solid var(--border); border-radius:var(--radius); position:relative;">
+        <div class="ov-status" id="replayStatus" style="font-size:12px;">STANDBY</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:48px;">MACHINE LOG ANALYSIS</div>
+    <div class="panel-deep" style="overflow-x:auto;">
+      <table class="log-table">
+        <thead><tr><th>PARAMETER SETTING</th><th>CANDIDATE VALUE</th><th>EVALUATION</th></tr></thead>
+        <tbody>
+          <tr><td>Tooling</td><td>${TOOL_LABELS[r.params.tool]}</td><td style="color:${r.toolScore >= 20 ? 'var(--badge-ready-text)' : 'var(--badge-not-text)'}">${r.toolScore >= 20 ? 'Optimal' : r.toolScore >= 15 ? 'Acceptable' : 'Sub-optimal'}</td></tr>
+          <tr><td>Spindle Speed</td><td>${r.params.rpm} RPM</td><td style="color:${r.rpmScore >= 15 ? 'var(--badge-ready-text)' : 'var(--badge-not-text)'}">${r.rpmScore >= 15 ? 'Optimal' : 'Sub-optimal'}</td></tr>
+          <tr><td>Feed Rate</td><td>${r.params.feed.toFixed(2)} mm/rev</td><td style="color:${r.feedScore >= 15 ? 'var(--badge-ready-text)' : 'var(--badge-not-text)'}">${r.feedScore >= 15 ? 'Optimal' : 'Sub-optimal'}</td></tr>
+          <tr><td>Depth of Cut</td><td>${r.params.depth.toFixed(2)} mm</td><td style="color:${r.depthScore >= 10 ? 'var(--badge-ready-text)' : 'var(--badge-not-text)'}">${r.depthScore >= 10 ? 'Optimal' : 'Sub-optimal'}</td></tr>
+          <tr><td>Process Sequencing</td><td>${r.params.order.map(o => ORDER_LABELS[o].split(' ')[0]).join(' → ')}</td><td style="color:${r.orderCorrect ? 'var(--badge-ready-text)' : 'var(--badge-not-text)'}">${r.orderCorrect ? 'Correct Protocol' : 'Incorrect Protocol'}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:32px;">
+      <button class="btn ${acted.shortlist ? 'btn-primary' : ''}" onclick="employerAct('${c.id}','shortlist')">${acted.shortlist ? '✓ SHORTLISTED' : 'SHORTLIST CANDIDATE'}</button>
+      <button class="btn ${acted.physical ? 'btn-primary' : ''}" onclick="employerAct('${c.id}','physical')">${acted.physical ? '✓ SHOP FLOOR TEST REQUESTED' : 'REQUEST SHOP FLOOR TEST'}</button>
+    </div>
+    <div style="font-size:12px; color:var(--text-3); margin-top:24px; border-top:1px solid var(--border); padding-top:16px;">Virtual assessment provides pre-verification evidence. Employers may conduct final physical testing.</div>
+  </div></div>`;
+}
+
+function employerAct(id, key) {
+  if (!State.employerActions[id]) State.employerActions[id] = {};
+  State.employerActions[id][key] = true;
+  toast(key === 'shortlist' ? 'Candidate Shortlisted' : 'Shop Floor Test Requested');
+  render();
+}
+
+async function replayAssessment(id) {
+  const c = getCandidateById(id);
+  const status = document.getElementById('replayStatus');
+  if(status) {
+    status.classList.add('show');
+    status.textContent = 'INITIALIZING REPLAY';
+  }
+  
+  Machine.attachTo('replayViewportHost');
+  await Machine.play(c.result, (idx, label) => { if(status) status.textContent = label; }, () => {});
+  if(status) status.textContent = 'REPLAY CONCLUDED';
+}
+
+const Machine = (function() {
+  let renderer, scene, camera, group, spindleGroup, workpiece, toolGroup, statusLight, chips = [];
+  let currentToolMesh = null;
+  const toolSets = {};
+  
+  let angle = { theta: Math.PI * 0.25, phi: 1.1, radius: 6.5 };
+  let target = new THREE.Vector3(0, 1.0, 0);
+  let running = false, rpm = 0;
+  let hostEl = null;
+  let ready = false;
+  
+  const WP_RADIUS = 0.55;
+  const WP_LENGTH = 2.1;
+  const WP_SEG_RADIAL = 48;
+  const WP_SEG_HEIGHT = 160; 
+
+  function build() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    scene.add(ambientLight);
+    
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    keyLight.position.set(4, 8, 5); keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(1024, 1024);
+    scene.add(keyLight);
+    
+    const spotLight = new THREE.SpotLight(0xffffff, 2.5);
+    spotLight.position.set(0, 5, 2);
+    spotLight.angle = Math.PI / 4;
+    spotLight.penumbra = 0.5;
+    scene.add(spotLight);
+
+    group = new THREE.Group();
+
+    const steel = new THREE.MeshStandardMaterial({ color: 0x2A2F33, roughness: 0.6, metalness: 0.6 });
+    const steelDark = new THREE.MeshStandardMaterial({ color: 0x111416, roughness: 0.7, metalness: 0.5 });
+    const aluminum = new THREE.MeshStandardMaterial({ color: 0x9CA3A7, roughness: 0.3, metalness: 0.8 });
+
+    // Bed
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 2.5), steel);
+    bed.position.set(0, 0.25, 0); bed.castShadow = true; bed.receiveShadow = true;
+    group.add(bed);
+
+    // Headstock
+    const headstock = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.4, 1.6), steelDark);
+    headstock.position.set(-1.9, 1.2, 0); headstock.castShadow = true;
+    group.add(headstock);
+
+    spindleGroup = new THREE.Group();
+    spindleGroup.position.set(-1.3, 1.2, 0);
+    group.add(spindleGroup);
+
+    const chuck = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.4, 32), steel);
+    chuck.rotation.z = Math.PI / 2; chuck.position.x = 0.2; chuck.castShadow = true;
+    spindleGroup.add(chuck);
+
+    const wpGeo = new THREE.CylinderGeometry(WP_RADIUS, WP_RADIUS, WP_LENGTH, WP_SEG_RADIAL, WP_SEG_HEIGHT);
+    wpGeo.rotateZ(Math.PI / 2); 
+    
+    const pos = wpGeo.attributes.position;
+    const origRadii = new Float32Array(pos.count);
+    for(let i=0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      const z = pos.getZ(i);
+      origRadii[i] = Math.sqrt(y*y + z*z);
+    }
+    wpGeo.userData.originalRadii = origRadii;
+
+    workpiece = new THREE.Mesh(wpGeo, aluminum);
+    workpiece.position.x = 1.45;
+    workpiece.castShadow = true;
+    spindleGroup.add(workpiece);
+
+    // Tool Carriage System
+    toolGroup = new THREE.Group();
+    // Start parked at safe right
+    toolGroup.position.set(1.2, 1.2, 0.8);
+    
+    // Tool Post (Holder)
+    const holder = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.6), steelDark);
+    holder.position.set(0, -0.2, 0.5); 
+    holder.castShadow = true;
+    toolGroup.add(holder);
+    
+    // Create Tool Variations
+    const shankMat = new THREE.MeshStandardMaterial({ color: 0x111416, roughness: 0.8, metalness: 0.4 });
+    const gold = new THREE.MeshStandardMaterial({ color: 0xD97706, roughness: 0.3, metalness: 0.8 });
+    const silver = new THREE.MeshStandardMaterial({ color: 0x9CA3A7, roughness: 0.2, metalness: 0.9 });
+    const darkCarbide = new THREE.MeshStandardMaterial({ color: 0x2A2F33, roughness: 0.4, metalness: 0.7 });
+
+    // 1. Roughing Tool (Thick shank, square insert)
+    const gRough = new THREE.Group();
+    const sRough = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.15, 0.7), shankMat);
+    sRough.position.set(0, -0.05, 0.35); // Attaches to tool post
+    const iRough = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.05, 0.12), gold);
+    iRough.position.set(0.06, 0.05, 0.06); // Tip aligns precisely at local (0,0,0) offset
+    gRough.add(sRough, iRough);
+    toolSets.roughing = gRough;
+
+    // 2. Finishing Tool (Tapered shank, diamond insert)
+    const gFinish = new THREE.Group();
+    const sFinish = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, 0.7), shankMat);
+    sFinish.position.set(0, -0.05, 0.35);
+    const iFinishGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.05, 4);
+    iFinishGeo.rotateY(Math.PI / 4);
+    const iFinish = new THREE.Mesh(iFinishGeo, silver);
+    iFinish.position.set(0.04, 0.05, 0.04); 
+    gFinish.add(sFinish, iFinish);
+    toolSets.finishing = gFinish;
+
+    // 3. General Tool (Standard shank, triangle insert)
+    const gGen = new THREE.Group();
+    const sGen = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.15, 0.7), shankMat);
+    sGen.position.set(0, -0.05, 0.35);
+    const iGenGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.05, 3);
+    iGenGeo.rotateY(-Math.PI / 6);
+    const iGen = new THREE.Mesh(iGenGeo, darkCarbide);
+    iGen.position.set(0.04, 0.05, 0.04);
+    gGen.add(sGen, iGen);
+    toolSets.general = gGen;
+    
+    group.add(toolGroup);
+
+    statusLight = new THREE.Mesh(new THREE.SphereGeometry(0.06,16,16), new THREE.MeshStandardMaterial({color:0x222222, emissive:0x000000}));
+    statusLight.position.set(-2.2, 2.0, 0.5);
+    group.add(statusLight);
+
+    scene.add(group);
+  }
+
+  function setTool(type) {
+    if (!toolGroup) return;
+    if (currentToolMesh) {
+      toolGroup.remove(currentToolMesh);
+    }
+    currentToolMesh = toolSets[type] || toolSets['general'];
+    toolGroup.add(currentToolMesh);
+  }
+
+  function resetWorkpiece() {
+    const pos = workpiece.geometry.attributes.position;
+    const orig = workpiece.geometry.userData.originalRadii;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      const z = pos.getZ(i);
+      const currentR = Math.sqrt(y*y + z*z);
+      if (currentR > 0) {
+        const ratio = orig[i] / currentR;
+        pos.setY(i, y * ratio);
+        pos.setZ(i, z * ratio);
+      }
+    }
+    pos.needsUpdate = true;
+    workpiece.geometry.computeVertexNormals();
+  }
+
+  function deformWorkpiece(toolWorldX, targetRadius) {
+    const localToolPoint = workpiece.worldToLocal(new THREE.Vector3(toolWorldX, 0, 0));
+    const localCutX = localToolPoint.x;
+    const pos = workpiece.geometry.attributes.position;
+    let modified = false;
+    
+    for (let i = 0; i < pos.count; i++) {
+      const vx = pos.getX(i);
+      if (vx > localCutX) {
+        const vy = pos.getY(i);
+        const vz = pos.getZ(i);
+        const currentR = Math.sqrt(vy*vy + vz*vz);
+        if (currentR > targetRadius) {
+          const ratio = targetRadius / currentR;
+          pos.setY(i, vy * ratio);
+          pos.setZ(i, vz * ratio);
+          modified = true;
+        }
+      }
+    }
+    if (modified) {
+      pos.needsUpdate = true;
+      workpiece.geometry.computeVertexNormals();
+    }
+  }
+
+  function updateCamera() {
+    const p = new THREE.Vector3(
+      target.x + angle.radius * Math.sin(angle.phi) * Math.cos(angle.theta),
+      target.y + angle.radius * Math.cos(angle.phi),
+      target.z + angle.radius * Math.sin(angle.phi) * Math.sin(angle.theta)
+    );
+    camera.position.copy(p);
+    camera.lookAt(target);
+  }
+
+  function fit() {
+    if (!hostEl) return;
+    const rect = hostEl.getBoundingClientRect();
+    const w = rect.width || 400, h = rect.height || 300;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+
+  function attachTo(hostId) {
+    const host = document.getElementById(hostId);
+    if (!host) return;
+    hostEl = host;
+    if (!renderer) {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.shadowMap.enabled = true;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      build();
+      updateCamera();
+      bindPointer(renderer.domElement);
+      startLoop();
+      window.addEventListener('resize', fit);
+    }
+    if (renderer.domElement.parentElement !== host) {
+      host.innerHTML = ''; 
+      host.appendChild(renderer.domElement);
+      renderer.domElement.style.width = '100%';
+      renderer.domElement.style.height = '100%';
+      renderer.domElement.style.display = 'block';
+      renderer.domElement.style.cursor = 'grab';
+    }
+    setTool(typeof State !== 'undefined' ? State.lab.tool : 'general');
+    fit();
+    ready = true;
+  }
+
+  function bindPointer(dom) {
+    let dragging = false, lx = 0, ly = 0;
+    dom.addEventListener('pointerdown', e => { dragging = true; lx = e.clientX; ly = e.clientY; dom.style.cursor = 'grabbing'; });
+    window.addEventListener('pointerup', () => { dragging = false; dom.style.cursor = 'grab'; });
+    window.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
+      angle.theta -= dx * 0.005;
+      angle.phi = Math.min(1.8, Math.max(0.2, angle.phi - dy * 0.005));
+      updateCamera();
+    });
+    dom.addEventListener('wheel', e => {
+      e.preventDefault();
+      angle.radius = Math.min(12, Math.max(3, angle.radius + e.deltaY * 0.01));
+      updateCamera();
+    }, { passive: false });
+  }
+
+  function spawnChip() {
+    const geo = new THREE.BoxGeometry(0.03, 0.015, 0.04);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xD97706, roughness: 0.5, metalness: 0.6 });
+    const chip = new THREE.Mesh(geo, mat);
+    chip.position.set(toolGroup.position.x - 0.1, toolGroup.position.y, toolGroup.position.z);
+    chip.userData = { vel: new THREE.Vector3((Math.random() - 0.5) * 0.02, 0.03 + Math.random() * 0.03, (Math.random() - 0.5) * 0.03 + 0.02), life: 1.0 };
+    group.add(chip);
+    chips.push(chip);
+    if (chips.length > 40) { const old = chips.shift(); group.remove(old); }
+  }
+
+  function updateChips() {
+    for (let i = chips.length - 1; i >= 0; i--) {
+      const c = chips[i];
+      c.position.add(c.userData.vel);
+      c.userData.vel.y -= 0.002; 
+      c.userData.life -= 0.02;
+      c.material.opacity = Math.max(0, c.userData.life);
+      c.material.transparent = true;
+      if (c.userData.life <= 0) {
+        group.remove(c);
+        chips.splice(i, 1);
+      }
+    }
+  }
+
+  function startLoop() {
+    function loop() {
+      requestAnimationFrame(loop);
+      const speed = running ? Math.max(0.05, (rpm / 3000) * 0.6) : 0.005;
+      if (spindleGroup) spindleGroup.rotation.x -= speed;
+      updateChips();
+      
+      if (statusLight) {
+        statusLight.material.emissiveIntensity = running ? 0.8 + Math.sin(performance.now() * 0.01) * 0.2 : 0.0;
+        statusLight.material.emissive.set(running ? 0xD97706 : 0x000000);
+      }
+      
+      if (renderer && scene && camera) renderer.render(scene, camera);
+    }
+    loop();
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function tween(duration, onUpdate) {
+    return new Promise(res => {
+      const start = performance.now();
+      function step(now) {
+        const p = Math.min(1, (now - start) / duration);
+        onUpdate(p);
+        if (p < 1) requestAnimationFrame(step); else res();
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function play(result, onPhase, onDiameter) {
+    resetWorkpiece();
+    running = false; 
+    rpm = result.params.rpm;
+    
+    const startRad = 0.55; 
+    const finalRad = Math.max(0.48, result.diameter / 100);
+    const roughRad = Math.max(0.50, (startRad + finalRad) / 2 + 0.005);
+    
+    const startX = 1.2; 
+    const endX = -0.6;  
+    const safeZ = 0.8;  
+
+    toolGroup.position.set(startX, 1.2, safeZ);
+    onPhase(0, 'INITIALIZING SYSTEM'); await wait(500);
+
+    onPhase(1, 'SPINDLE START'); 
+    running = true;
+    await tween(500, p => { toolGroup.position.z = lerp(safeZ, startRad + 0.05, p); });
+
+    onPhase(2, 'ROUGHING');
+    toolGroup.position.z = roughRad;
+    await tween(1200, p => {
+      const curX = lerp(startX, endX, p);
+      toolGroup.position.x = curX;
+      deformWorkpiece(curX, roughRad);
+      onDiameter(roughRad * 100);
+      if (Math.random() < 0.6) spawnChip();
+    });
+    
+    await tween(200, p => { toolGroup.position.z = lerp(roughRad, safeZ, p); });
+    await tween(400, p => { toolGroup.position.x = lerp(endX, startX, p); });
+
+    onPhase(3, 'FINISHING');
+    toolGroup.position.z = finalRad;
+    await tween(1400, p => {
+      const curX = lerp(startX, endX, p);
+      toolGroup.position.x = curX;
+      deformWorkpiece(curX, finalRad);
+      onDiameter(finalRad * 100);
+      if (Math.random() < 0.4) spawnChip();
+    });
+
+    onPhase(4, 'MEASURING');
+    await tween(300, p => { toolGroup.position.z = lerp(finalRad, safeZ, p); });
+    await tween(400, p => { toolGroup.position.x = lerp(endX, startX, p); });
+    await wait(500);
+
+    onPhase(5, 'COMPLETE');
+    running = false;
+    onDiameter(result.diameter);
+  }
+
+  function setCameraView(view) {
+    let endTheta = angle.theta, endPhi = angle.phi, endRadius = angle.radius;
+    
+    const btns = document.querySelectorAll('.view-controls button');
+    if (btns.length) btns.forEach(b => b.classList.remove('active'));
+    
+    const btn = document.getElementById('btn-cam-' + view);
+    if(btn) btn.classList.add('active');
+
+    if (view === 'iso') { endTheta = Math.PI * 0.25; endPhi = 1.1; endRadius = 6.5; }
+    else if (view === 'front') { endTheta = Math.PI * 0.5; endPhi = Math.PI / 2 - 0.05; endRadius = 5.5; }
+    else if (view === 'top') { endTheta = Math.PI * 0.5; endPhi = 0.01; endRadius = 6.0; }
+
+    const startTheta = angle.theta, startPhi = angle.phi, startRadius = angle.radius;
+    tween(600, p => {
+        const ease = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+        angle.theta = lerp(startTheta, endTheta, ease);
+        angle.phi = lerp(startPhi, endPhi, ease);
+        angle.radius = lerp(startRadius, endRadius, ease);
+        updateCamera();
+    });
+  }
+
+  return { attachTo, play, setCameraView, setTool, get ready() { return ready; } };
+})();
+
+function afterRender() {
+  if (State.view === 'landing') {
+    Machine.attachTo('heroMachineHost');
+  } else if (State.view === 'lab') {
+    Machine.attachTo('viewportHost');
+    renderOrderList();
+    renderTimeline(-1);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
