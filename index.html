@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAARYA | Industrial Skill Verification</title>
-<meta name="description" content="KAARYA verifies practical industrial skills through a simulated CNC environment, giving employers evidence instead of claims.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23F7DC00'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Dark Theme (Default) */
+  /* Dark Theme */
   --bg: #0B0D0E;
   --panel-deep: #111416;
   --panel: #171A1D;
   --panel-elevated: #1D2124;
   --accent: #F7DC00;
-  --accent-dim: #B9A700;
   --text: #F4F4F0;
   --text-2: #9CA3A7;
   --text-3: #60676C;
@@ -38,6 +34,9 @@
 
   --font-sans: 'Space Grotesk', 'Inter', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
+  
+  --vp-bg-center: #3A4148;
+  --vp-bg-edge: #171A1D;
 }
 
 [data-theme="light"] {
@@ -45,13 +44,12 @@
   --bg: #F7FAFC;
   --panel-deep: #E2E8F0;
   --panel: #FFFFFF;
-  --panel-elevated: #F7FAFC;
-  --accent: #D97706; /* High contrast industrial orange for light mode */
-  --accent-dim: #B45309;
-  --text: #111827;
-  --text-2: #4B5563;
-  --text-3: #6B7280;
-  --border: #D1D5DB;
+  --panel-elevated: #F1F5F9;
+  --accent: #D97706; 
+  --text: #0F172A;
+  --text-2: #475569;
+  --text-3: #64748B;
+  --border: #CBD5E1;
 
   --badge-ready-bg: #DCFCE7;
   --badge-ready-text: #166534;
@@ -64,6 +62,9 @@
   --badge-not-bg: #FEE2E2;
   --badge-not-text: #991B1B;
   --badge-not-border: #FCA5A5;
+  
+  --vp-bg-center: #F8FAFC;
+  --vp-bg-edge: #CBD5E1;
 }
 
 * { box-sizing: border-box; }
@@ -78,7 +79,7 @@ html, body {
 body { overflow-x: hidden; }
 a { color: inherit; text-decoration: none; cursor: pointer; }
 button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
-::selection { background: var(--accent); color: var(--bg); }
+::selection { background: var(--accent); color: #000; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--panel-deep); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -100,21 +101,16 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .nav-right { display: flex; align-items: center; gap: 16px; }
 .nav-pill { display: flex; background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 4px; }
 .nav-pill button { 
-  background: transparent; border: none; color: var(--text-2); font-size: 13px; font-weight: 600; 
-  letter-spacing: 0.02em; padding: 6px 16px; border-radius: 20px;
+  background: transparent; border: none; color: var(--text-2); font-size: 12px; font-weight: 600; 
+  letter-spacing: 0.04em; padding: 6px 16px; border-radius: 20px; text-transform: uppercase;
 }
-.nav-pill button.active { background: var(--accent); color: var(--bg); }
+.nav-pill button.active { background: var(--accent); color: #000; }
 .theme-toggle {
-  background: transparent; border: 1px solid var(--border); color: var(--text);
+  background: var(--panel-elevated); border: 1px solid var(--border); color: var(--text);
   width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
 }
 .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-.nav-status { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); font-weight: 600; text-transform: uppercase; }
-
-.view-controls { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; background: var(--panel); padding: 4px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.view-controls button { border-radius: 20px; font-size: 11px; padding: 6px 16px; border: none; font-weight: 600; color: var(--text-2); background: transparent; cursor: pointer; transition: all 0.2s; font-family: var(--font-sans); letter-spacing: 0.05em; }
-.view-controls button:hover { background: var(--panel-elevated); color: var(--text); }
-.view-controls button.active { background: var(--panel-deep); color: var(--accent); border: 1px solid var(--accent); }
 
 .page { padding-top: 56px; min-height: 100vh; }
 
@@ -124,7 +120,7 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   overflow: hidden; text-align: center;
 }
-.hero-3d { position: absolute; inset: 0; opacity: 0.4; }
+.hero-3d { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; }
 .hero-3d canvas { width: 100%; height: 100%; display: block; }
 .hero-fade { 
   position: absolute; inset: 0; 
@@ -139,23 +135,23 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .choice-card {
   width: 260px; text-align: left; background: var(--panel-elevated); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 24px; transition: border-color 0.2s, transform 0.2s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 .choice-card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .choice-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.1em; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; }
 .choice-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
 .choice-desc { font-size: 13px; color: var(--text-2); margin-bottom: 24px; line-height: 1.5; }
 
-/* ---------- Buttons & Layout ---------- */
+/* ---------- Buttons & Components ---------- */
 .btn {
   border: 1px solid var(--border); background: var(--panel); color: var(--text);
   padding: 12px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; 
   border-radius: var(--radius); display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  text-transform: uppercase;
+  text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 .btn:hover { border-color: var(--text-3); }
-.btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-.btn-primary:hover { opacity: 0.9; border-color: var(--text); }
+.btn-primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.btn-primary:hover { opacity: 0.9; border-color: transparent; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-block { width: 100%; }
 
@@ -165,7 +161,7 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .h1 { font-size: 32px; font-weight: 700; margin: 0 0 12px; }
 .h2 { font-size: 24px; font-weight: 700; margin: 0 0 12px; }
 .lead { color: var(--text-2); font-size: 15px; line-height: 1.6; margin-bottom: 32px; }
-.panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
 .panel-deep { background: var(--panel-deep); border: 1px solid var(--border); border-radius: var(--radius); }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
@@ -177,7 +173,7 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 }
 .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
 
-/* ---------- Skill DNA ---------- */
+/* ---------- Badges & Rows ---------- */
 .dna-row {
   display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; 
   border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; background: var(--panel);
@@ -189,10 +185,6 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .badge-ready { background: var(--badge-ready-bg); color: var(--badge-ready-text); border: 1px solid var(--badge-ready-border); }
 .badge-near { background: var(--badge-near-bg); color: var(--badge-near-text); border: 1px solid var(--badge-near-border); }
 .badge-not { background: var(--badge-not-bg); color: var(--badge-not-text); border: 1px solid var(--badge-not-border); }
-.claim-note {
-  font-family: var(--font-mono); font-size: 12px; color: var(--text-3); font-weight: 500;
-  margin: 24px 0; padding: 16px; border: 1px dashed var(--border); border-radius: var(--radius); background: var(--panel-deep);
-}
 
 /* ---------- CNC Lab ---------- */
 .lab-wrap { padding-top: 56px; height: 100vh; display: flex; flex-direction: column; }
@@ -210,10 +202,13 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 .task-controls-hint { color: var(--text-2); font-size: 13px; margin-left: auto; }
 
 .lab-body { flex: 1; display: grid; grid-template-columns: 1fr 360px; overflow: hidden; }
-.viewport { position: relative; background: var(--bg); overflow: hidden; display: flex; justify-content: center; align-items: center; }
+.viewport { 
+  position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; 
+  background: radial-gradient(circle at 50% 50%, var(--vp-bg-center) 0%, var(--vp-bg-edge) 100%);
+}
 .viewport canvas { width: 100%; height: 100%; display: block; }
 .ov { position: absolute; font-family: var(--font-mono); pointer-events: none; z-index: 10; }
-.ov-box { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: var(--radius); }
+.ov-box { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .ov-label { font-size: 10px; font-weight: 600; color: var(--text-3); margin-bottom: 4px; text-transform: uppercase; }
 .ov-value { font-size: 15px; font-weight: 600; color: var(--text); }
 .ov-value.accent { color: var(--accent); }
@@ -227,11 +222,11 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
 }
 .ov-status.show { display: block; }
 .orbit-hint { position: absolute; bottom: 24px; right: 24px; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); pointer-events: none; z-index: 10; }
-.sound-toggle {
-  position: absolute; top: 80px; right: 24px; background: var(--panel); border: 1px solid var(--border);
-  color: var(--text); width: 40px; height: 40px; border-radius: var(--radius); font-size: 16px;
-  display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+
+.view-controls { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; background: var(--panel); padding: 4px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.view-controls button { border-radius: 20px; font-size: 11px; padding: 6px 16px; border: none; font-weight: 600; color: var(--text-2); background: transparent; cursor: pointer; transition: all 0.2s; font-family: var(--font-sans); letter-spacing: 0.05em; }
+.view-controls button:hover { background: var(--panel-elevated); color: var(--text); }
+.view-controls button.active { background: var(--panel-deep); color: var(--accent); border: 1px solid var(--accent); }
 
 .controls-pane { border-left: 1px solid var(--border); background: var(--panel-deep); overflow-y: auto; padding: 24px; }
 .tool-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
@@ -304,20 +299,13 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px;
 .gap-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--badge-not-text); border-radius: var(--radius); margin-bottom: 32px; }
 .gap-title { font-weight: 700; font-size: 15px; color: var(--badge-not-text); margin-bottom: 4px; }
 
-/* ---------- MCQ / Retest ---------- */
-.mcq-question { margin-bottom: 32px; }
-.mcq-question p { font-size: 16px; font-weight: 600; margin-bottom: 16px; line-height: 1.5; }
-.mcq-label { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; background: var(--panel-deep); cursor: pointer; transition: border-color 0.2s; }
-.mcq-label:hover { border-color: var(--text-3); }
-.mcq-label input { width: 18px; height: 18px; accent-color: var(--accent); }
-
+/* ---------- Retest & Profiles ---------- */
 .retest-flow { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; margin: 40px 0; }
 .retest-card { text-align: center; padding: 32px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); min-width: 200px; }
 .rc-num { font-family: var(--font-mono); font-size: 48px; font-weight: 700; margin-bottom: 8px; }
 .rc-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; }
 .retest-arrow { font-family: var(--font-mono); font-size: 24px; color: var(--text-3); }
 
-/* ---------- Dashboard Profiles ---------- */
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 48px; }
 .stat-card { padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
 .stat-num { font-family: var(--font-mono); font-size: 36px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
@@ -341,77 +329,9 @@ tr.cand-row:hover { background: var(--panel); }
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 .toast.show { opacity: 1; }
-
 .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-2); font-size: 13px; font-weight: 600; margin-bottom: 24px; font-family: var(--font-mono); text-transform: uppercase; }
 .back-link:hover { color: var(--accent); }
-
-/* ---------- Added: auth, forms, nav links, review states ---------- */
-.nav-link {
-  background: transparent; border: 1px solid var(--border); color: var(--text-2);
-  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 6px 14px; border-radius: 20px;
-}
-.nav-link:hover { border-color: var(--accent); color: var(--accent); }
-
-.auth-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
-.auth-tabs button {
-  background: transparent; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px;
-  color: var(--text-3); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; padding: 10px 16px;
-}
-.auth-tabs button:hover { color: var(--text); }
-.auth-tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-.form-error {
-  min-height: 0; margin-bottom: 16px; font-size: 13px; font-weight: 600; color: var(--badge-not-text);
-  line-height: 1.5;
-}
-.form-error:empty { display: none; }
-.demo-hint {
-  margin-top: 20px; padding: 12px 14px; font-size: 12px; color: var(--text-2); line-height: 1.6;
-  border: 1px dashed var(--border); border-radius: var(--radius); background: var(--panel-deep);
-  font-family: var(--font-mono);
-}
-.demo-hint strong { color: var(--text); font-weight: 600; }
-.link-btn {
-  background: none; border: none; padding: 0; margin-left: 6px; color: var(--accent);
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-decoration: underline;
-}
-.mcq-cap { font-size: 10px; letter-spacing: 0.08em; color: var(--text-3); margin: -8px 0 12px; font-weight: 600; }
-.mcq-review { padding: 12px 16px; border-radius: var(--radius); font-size: 14px; line-height: 1.5; border: 1px solid; }
-.mcq-review.ok { background: var(--badge-ready-bg); color: var(--badge-ready-text); border-color: var(--badge-ready-border); }
-.mcq-review.bad { background: var(--badge-not-bg); color: var(--badge-not-text); border-color: var(--badge-not-border); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-a.btn { text-decoration: none; }
-.h1 + .stat-grid { margin-top: 32px; }
-
-/* ---------- Added: responsive ---------- */
-@media (max-width: 900px) {
-  .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .grid-2 { grid-template-columns: 1fr; }
-  .lab-wrap { height: auto; min-height: 100vh; }
-  .lab-body { grid-template-columns: 1fr; overflow: visible; }
-  .viewport { height: 55vh; min-height: 320px; }
-  .controls-pane { border-left: none; border-top: 1px solid var(--border); overflow: visible; }
-  .status-bar { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
-  .timeline { overflow-x: auto; }
-}
-@media (max-width: 640px) {
-  .topnav { padding: 0 14px; }
-  .nav-right { gap: 8px; }
-  .nav-status { display: none; }
-  .nav-link { padding: 6px 10px; font-size: 11px; }
-  .container, .container-narrow { padding-left: 16px; padding-right: 16px; }
-  .panel { padding: 20px; }
-  .stat-grid { gap: 12px; }
-  .stat-num { font-size: 28px; }
-  .result-diam { font-size: 44px; }
-  .score-num { font-size: 56px; }
-  .choice-card { width: 100%; }
-  .retest-flow { gap: 16px; }
-  .ov-tl, .ov-tr { top: 12px; }
-  .ov-tl { left: 12px; } .ov-tr { right: 12px; }
-}
 </style>
-<script>try{if(localStorage.getItem('kaarya-theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
 <body>
 
@@ -424,54 +344,45 @@ a.btn { text-decoration: none; }
 </div>
 
 <div id="app"></div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast"></div>
 
-<!-- Three.js (3D machine) -->
+<!-- Three.js Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
-/* =========================================================================
-   Theme Management
-   ========================================================================= */
-let isLightMode = document.documentElement.getAttribute('data-theme') === 'light';
+let isLightMode = false;
 function toggleTheme() {
   isLightMode = !isLightMode;
-  if(isLightMode) {
-    document.documentElement.setAttribute('data-theme', 'light');
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-  }
-  try { localStorage.setItem('kaarya-theme', isLightMode ? 'light' : 'dark'); } catch (e) {}
+  document.documentElement.setAttribute('data-theme', isLightMode ? 'light' : 'dark');
   renderNav();
-  if (typeof Machine !== 'undefined' && Machine.applyTheme) {
-    Machine.applyTheme(isLightMode);
-  }
 }
 
-/* =========================================================================
-   Application State
-   ========================================================================= */
 const CAPABILITY_NAMES = ["CNC Turning", "Tool Selection", "Parameter Selection", "Process Sequencing", "Dimensional Control"];
-
-const DEFAULT_LAB = () => ({ tool: 'general', rpm: 1800, feed: 0.18, depth: 0.80, order: ['rough', 'finish', 'measure'] });
-const DEFAULT_CANDIDATE = { name: '', education: 'Diploma in Mechanical Engineering', experience: '1 Year', branch: 'Manufacturing', targetRole: 'CNC Machinist', built: false };
 
 const State = {
   view: 'landing',
-  user: null,                // { id, role, name, email, profile, ... } from the server session
-  authTab: 'register',
-  candidate: { ...DEFAULT_CANDIDATE },
-  lab: DEFAULT_LAB(),
+  mode: 'candidate', 
+  candidate: {
+    name: 'Ravi Kumar', education: 'Diploma in Mechanical Engineering', experience: '1 Year',
+    branch: 'Manufacturing', targetRole: 'CNC Machinist', built: false
+  },
+  lab: {
+    tool: 'general', rpm: 1800, feed: 0.18, depth: 0.80, order: ['rough','finish','measure']
+  },
   attempt1: null,
+  mcqScore: 0,
   attempt2: null,
-  quiz: null,                // { quizId, questions } for the current knowledge check
-  quizResult: null,
-  quizDone: false,
-  pool: null,                // employer: { stats, candidates }
-  report: null,              // employer: single candidate report
-  jobs: [],
-  msmes: [],
-  demo: null
+  selectedCandidateId: 'ravi',
+  employerActions: {},
+  currentMsme: null
 };
+
+const MSME_LIST = [
+  { id: 'shuddh', name: 'SHUDDH', url: 'https://shuddh-main-2.vercel.app', domain: 'Waste Management Solutions' },
+  { id: 'rakshak', name: 'RAKSHAK', url: 'https://rakshak-weld.vercel.app', domain: 'Real-time Analytics & Knowledge System' },
+  { id: 'tendrix', name: 'TENDRIX', url: 'https://tendrix-site.vercel.app/#innovations', domain: 'Robotic Arms and Precision Manufacturing' },
+  { id: 'vayunetra', name: 'VAYUNETRA', url: 'https://vayunetra-five.vercel.app', domain: 'Air Quality Indexing Systems' }
+];
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -480,107 +391,81 @@ function toast(msg) {
   clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+function computeResult(params, bonusPoints = 0) {
+  const toolScoreMap = { finishing: 25, general: 18, roughing: 12 };
+  const toolScore = toolScoreMap[params.tool] || 12;
+  const rpmScore = Math.max(5, 20 - Math.abs(params.rpm - 1800) * 0.015);
+  const feedScore = Math.max(5, 20 - Math.abs(params.feed - 0.18) * 60);
+  const depthScore = Math.max(3, 15 - Math.abs(params.depth - 0.80) * 8);
+  const orderCorrect = params.order.join(',') === 'rough,finish,measure';
+  const processScore = orderCorrect ? 20 : 8;
+  
+  let total = Math.round(toolScore + rpmScore + feedScore + depthScore + processScore) + bonusPoints;
+  total = Math.min(100, Math.max(0, total));
 
-/* =========================================================================
-   Helpers: escaping, API client, session
-   ========================================================================= */
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const depthDeviation = params.depth - 0.80;
+  const feedDeviation = params.feed - 0.18;
+  const rpmDeviation = (params.rpm - 1800) / 1000;
+  let diameter = 50.00 + (bonusPoints > 0 ? 0.02 : 0.04) - depthDeviation * 1.5 + feedDeviation * 0.8 - rpmDeviation * 0.1;
+  if (!orderCorrect) diameter += 0.25;
+  if (params.tool !== 'finishing') diameter += 0.08;
+  diameter = Math.round(diameter * 100) / 100;
+  
+  const withinTolerance = Math.abs(diameter - 50.00) <= 0.05;
 
-async function api(path, { method = 'GET', body } = {}) {
-  let res;
-  try {
-    res = await fetch('/api' + path, {
-      method,
-      credentials: 'same-origin',
-      headers: body ? { 'Content-Type': 'application/json' } : {},
-      body: body ? JSON.stringify(body) : undefined
-    });
-  } catch (e) {
-    const err = new Error('Cannot reach the server. Check your connection and try again.');
-    err.network = true;
-    throw err;
-  }
-  let data = null;
-  try { data = await res.json(); } catch (e) { /* empty body */ }
-  if (!res.ok) {
-    const err = new Error((data && data.error) || ('Request failed (' + res.status + ')'));
-    err.status = res.status;
-    err.fields = data && data.fields;
-    // A session that expired mid-use sends the person back to the start.
-    if (res.status === 401 && State.user && !path.startsWith('/auth/')) {
-      applyUser(null);
-      err.handled = true;
-      goTo('landing');
-      toast('Your session expired. Please log in again.');
-    }
-    throw err;
-  }
-  return data;
-}
-const fail = e => { if (!e.handled) toast(e.message); };
+  const verified = {
+    "CNC Turning": true,
+    "Tool Selection": toolScore >= 18,
+    "Parameter Selection": (rpmScore + feedScore + depthScore) >= 40 || bonusPoints > 0,
+    "Process Sequencing": orderCorrect,
+    "Dimensional Control": withinTolerance
+  };
+  const verifiedCount = Object.values(verified).filter(Boolean).length;
 
-function showFormError(e) {
-  const el = document.getElementById('formError');
-  if (!el) return toast(e.message);
-  el.textContent = e.fields ? Object.values(e.fields).join(' · ') : e.message;
-}
+  let readiness = 'NOT READY';
+  if (total >= 88) readiness = 'READY'; 
+  else if (total >= 70) readiness = 'NEAR-READY';
 
-/** Syncs client state from the server's user payload (or clears it when null). */
-function applyUser(user) {
-  State.user = user || null;
-  State.attempt1 = State.attempt2 = null;
-  State.quizDone = false; State.quiz = null; State.quizResult = null;
-  State.candidate = { ...DEFAULT_CANDIDATE };
-  if (user && user.role === 'candidate') {
-    const p = user.profile;
-    State.candidate = {
-      name: user.name,
-      education: p.education || DEFAULT_CANDIDATE.education,
-      experience: p.experience || DEFAULT_CANDIDATE.experience,
-      branch: p.branch || DEFAULT_CANDIDATE.branch,
-      targetRole: p.targetRole || DEFAULT_CANDIDATE.targetRole,
-      built: p.completed
-    };
-    State.attempt1 = user.attempts[1];
-    State.attempt2 = user.attempts[2];
-    State.quizDone = !!(user.quiz && user.quiz.submitted);
-  }
+  let gap = null;
+  if (!withinTolerance || !orderCorrect) gap = "Precision Machining & Quality Control";
+  else if (toolScore < 20) gap = "Tooling Optimization";
+
+  return {
+    params: JSON.parse(JSON.stringify(params)),
+    toolScore: Math.round(toolScore), rpmScore: Math.round(rpmScore), feedScore: Math.round(feedScore),
+    depthScore: Math.round(depthScore), processScore, total, diameter, withinTolerance,
+    orderCorrect, verified, verifiedCount, readiness,
+    capabilityMatch: Math.min(100, total + 8),
+    gap: gap
+  };
 }
 
-async function logout() {
-  try { await api('/auth/logout', { method: 'POST' }); } catch (e) { /* ignore */ }
-  applyUser(null);
-  State.pool = null; State.report = null; State.lab = DEFAULT_LAB();
-  goTo('landing');
-  toast('Logged out');
-}
+const SEED = {
+  arun: { name: 'Arun', role: 'CNC Machinist', params: { tool: 'finishing', rpm: 1750, feed: 0.19, depth: 0.75, order: ['rough','finish','measure'] } },
+  kiran: { name: 'Kiran', role: 'CNC Machinist', params: { tool: 'roughing', rpm: 2600, feed: 0.35, depth: 0.30, order: ['finish','rough','measure'] } },
+  meena: { name: 'Meena', role: 'CNC Machinist', params: { tool: 'general', rpm: 1950, feed: 0.23, depth: 0.95, order: ['rough','finish','measure'] } }
+};
+Object.keys(SEED).forEach(k => { SEED[k].result = computeResult(SEED[k].params); });
 
-/* =========================================================================
-   Routing & Views
-   ========================================================================= */
 function goTo(view, extra) {
   State.view = view;
   if (extra) Object.assign(State, extra);
   render();
   window.scrollTo(0, 0);
 }
-function setAuthTab(t) { State.authTab = t; render(); }
-function enterCandidate() {
-  if (State.user && State.user.role !== 'candidate') { toast('You are logged in as an employer. Log out to use the candidate workspace.'); return; }
-  goTo(candidateHomeView());
-}
-async function enterEmployer() {
-  if (State.user && State.user.role !== 'employer') { toast('You are logged in as a candidate. Log out to use the employer portal.'); return; }
-  if (State.user) return openEmployerDashboard();
-  goTo('msme-select');
+function setMode(m) { 
+  State.mode = m; 
+  if (m === 'candidate') {
+    goTo(candidateHomeView());
+  } else {
+    goTo(State.currentMsme ? 'msme-dashboard' : 'msme-select');
+  }
 }
 function candidateHomeView() {
-  if (!State.user) return 'auth';
   if (!State.candidate.built) return 'onboarding';
   if (!State.attempt1) return 'skilldna';
-  if (State.attempt2 || !State.attempt1.gap) return 'profile';
-  return State.quizDone ? 'lab' : 'readiness';
+  if (State.attempt2) return 'profile';
+  return 'readiness';
 }
 
 function render() {
@@ -591,9 +476,8 @@ function render() {
     'landing': viewLanding, 'onboarding': viewOnboarding, 'skilldna': viewSkillDNA,
     'lab': viewLab, 'result': viewResult, 'readiness': viewReadiness,
     'upskill': viewUpskill, 'mcq': viewMCQ, 'retest': viewRetest,
-    'profile': viewProfile, 'auth': viewAuth, 'mcq-result': viewMcqResult,
-    'msme-select': viewMsmeSelect, 'msme-onboard': viewMsmeOnboard,
-    'msme-dashboard': viewMsmeDashboard, 'msme-report': viewMsmeReport
+    'profile': viewProfile, 'msme-dashboard': viewMsmeDashboard, 'msme-report': viewMsmeReport,
+    'msme-select': viewMsmeSelect, 'msme-onboard': viewMsmeOnboard
   };
   const fn = views[State.view] || viewLanding;
   app.innerHTML = fn();
@@ -603,24 +487,20 @@ function render() {
 function renderNav() {
   const nr = document.getElementById('navRight');
   if (!nr) return;
-  const u = State.user;
+  
+  const showSwitch = State.candidate.built;
   nr.innerHTML = `
-    ${u ? `
-      <div class="nav-status">${esc(u.role === 'employer' ? u.profile.orgName : u.name)} · ${u.role.toUpperCase()}</div>
-      ${u.role === 'candidate'
-        ? `<button class="nav-link" onclick="enterCandidate()">MY WORKSPACE</button>`
-        : `<button class="nav-link" onclick="openEmployerDashboard()">DASHBOARD</button>`}
-      <button class="nav-link" onclick="logout()">LOG OUT</button>`
-      : `<div class="nav-status">Skill Verification</div>`}
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme" aria-label="Toggle theme">
+    ${showSwitch ? `
+    <div class="nav-pill">
+      <button class="${State.mode === 'candidate' ? 'active' : ''}" onclick="setMode('candidate')">CANDIDATE</button>
+      <button class="${State.mode === 'msme' ? 'active' : ''}" onclick="setMode('msme')">MSME</button>
+    </div>` : ''}
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
       ${isLightMode ? '🌙' : '☀️'}
     </button>
   `;
 }
 
-/* =========================================================================
-   View Definitions
-   ========================================================================= */
 function viewLanding() {
   return `
   <div class="page">
@@ -636,56 +516,18 @@ function viewLanding() {
             <div class="choice-label">FOR CANDIDATES</div>
             <div class="choice-title">Demonstrate Capability</div>
             <div class="choice-desc">Prove your technical skills in a live virtual assessment.</div>
-            <button class="btn btn-primary btn-block" onclick="enterCandidate()">ENTER WORKSPACE</button>
+            <button class="btn btn-primary btn-block" onclick="goTo('onboarding')">ENTER WORKSPACE</button>
           </div>
           <div class="choice-card">
-            <div class="choice-label">FOR EMPLOYERS</div>
+            <div class="choice-label">FOR MSMEs</div>
             <div class="choice-title">Hire with Evidence</div>
             <div class="choice-desc">Access talent ranked by proven, objective capability.</div>
-            <button class="btn btn-block" onclick="enterEmployer()">ENTER PORTAL</button>
+            <button class="btn btn-block" onclick="setMode('msme')">ENTER PORTAL</button>
           </div>
         </div>
       </div>
     </div>
   </div>`;
-}
-
-function viewAuth() {
-  const reg = State.authTab === 'register';
-  return `
-  <div class="page"><div class="container-narrow">
-    <div class="section-title">CANDIDATE: ACCESS</div>
-    <h1 class="h1">${reg ? 'Create Your Account' : 'Welcome Back'}</h1>
-    <p class="lead">${reg ? 'Register to save your assessment, verified skills and profile so employers can find you.' : 'Log in to continue where you left off.'}</p>
-    <div class="panel">
-      <div class="auth-tabs">
-        <button class="${!reg ? 'active' : ''}" onclick="setAuthTab('login')">LOG IN</button>
-        <button class="${reg ? 'active' : ''}" onclick="setAuthTab('register')">REGISTER</button>
-      </div>
-      ${reg ? `<div class="field"><label>FULL NAME</label><input id="a-name" autocomplete="name" maxlength="80"></div>` : ''}
-      <div class="field"><label>EMAIL</label><input id="a-email" type="email" autocomplete="email" maxlength="254"></div>
-      <div class="field"><label>PASSWORD</label><input id="a-pass" type="password" autocomplete="${reg ? 'new-password' : 'current-password'}" maxlength="128" ${reg ? 'placeholder="At least 8 characters"' : ''}></div>
-      <div class="form-error" id="formError" role="alert"></div>
-      <button class="btn btn-primary btn-block" id="submitBtn" data-submit onclick="submitAuth()">${reg ? 'CREATE ACCOUNT' : 'LOG IN'}</button>
-    </div>
-  </div></div>`;
-}
-
-async function submitAuth() {
-  const reg = State.authTab === 'register';
-  const body = { email: val('a-email'), password: val('a-pass') };
-  if (reg) { body.role = 'candidate'; body.name = val('a-name'); }
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  try {
-    const { user } = await api(reg ? '/auth/register' : '/auth/login', { method: 'POST', body });
-    applyUser(user);
-    if (user.role === 'employer') return openEmployerDashboard();
-    goTo(candidateHomeView());
-  } catch (e) {
-    btn.disabled = false;
-    showFormError(e);
-  }
 }
 
 function viewOnboarding() {
@@ -695,36 +537,30 @@ function viewOnboarding() {
     <div class="section-title">CANDIDATE: SETUP</div>
     <h1 class="h1">Build Your Profile</h1>
     <p class="lead">Enter your basic details. The rest of your profile will be built entirely on proven capability.</p>
+    
     <div class="panel">
-      <div class="field"><label>NAME</label><input id="f-name" value="${esc(c.name)}"></div>
+      <div class="field"><label>NAME</label><input id="f-name" value="${c.name}"></div>
       <div class="grid-2">
-        <div class="field"><label>EDUCATION</label><input id="f-edu" value="${esc(c.education)}"></div>
-        <div class="field"><label>EXPERIENCE</label><input id="f-exp" value="${esc(c.experience)}"></div>
+        <div class="field"><label>EDUCATION</label><input id="f-edu" value="${c.education}"></div>
+        <div class="field"><label>EXPERIENCE</label><input id="f-exp" value="${c.experience}"></div>
       </div>
       <div class="grid-2">
-        <div class="field"><label>INDUSTRY BRANCH</label><input id="f-branch" value="${esc(c.branch)}"></div>
-        <div class="field"><label>TARGET ROLE</label><input id="f-role" value="${esc(c.targetRole)}"></div>
+        <div class="field"><label>INDUSTRY BRANCH</label><input id="f-branch" value="${c.branch}"></div>
+        <div class="field"><label>TARGET ROLE</label><input id="f-role" value="${c.targetRole}"></div>
       </div>
-      <div class="form-error" id="formError" role="alert"></div>
-      <button class="btn btn-primary btn-block" id="submitBtn" data-submit onclick="submitOnboarding()">SAVE & PROCEED</button>
+      <button class="btn btn-primary btn-block" onclick="submitOnboarding()">SAVE & PROCEED</button>
     </div>
   </div></div>`;
 }
 
-async function submitOnboarding() {
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  try {
-    const { user } = await api('/candidate/profile', { method: 'PUT', body: {
-      name: val('f-name'), education: val('f-edu'), experience: val('f-exp'),
-      branch: val('f-branch'), targetRole: val('f-role')
-    } });
-    applyUser(user);
-    goTo('skilldna');
-  } catch (e) {
-    btn.disabled = false;
-    showFormError(e);
-  }
+function submitOnboarding() {
+  State.candidate.name = document.getElementById('f-name').value || 'Candidate';
+  State.candidate.education = document.getElementById('f-edu').value;
+  State.candidate.experience = document.getElementById('f-exp').value;
+  State.candidate.branch = document.getElementById('f-branch').value;
+  State.candidate.targetRole = document.getElementById('f-role').value;
+  State.candidate.built = true;
+  goTo('skilldna');
 }
 
 function viewSkillDNA() {
@@ -738,16 +574,13 @@ function viewSkillDNA() {
         <div class="dna-name">${n}</div>
         <div class="badge badge-claimed">UNVERIFIED CLAIM</div>
       </div>`).join('')}
-    <div class="claim-note">
+    <div class="claim-note" style="margin-top:24px; padding:16px; border:1px dashed var(--border); background:var(--panel-deep); font-size:13px; color:var(--text-2);">
       <strong>Note:</strong> Anyone can list skills on a resume. To stand out to employers on KAARYA, you must complete the practical simulation to verify your competence.
     </div>
-    <button class="btn btn-primary btn-block" onclick="goTo('lab')">START VIRTUAL ASSESSMENT</button>
+    <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="goTo('lab')">START VIRTUAL ASSESSMENT</button>
   </div></div>`;
 }
 
-/* =========================================================================
-   CNC Lab View & Logic
-   ========================================================================= */
 const TOOL_ICONS = {
   roughing: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20L14 10M14 10L18 6L20 8L16 12M14 10L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   finishing: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20L12 12M12 12L18 6L20 8L14 14M12 12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -761,13 +594,13 @@ function viewLab() {
   const warnings = [];
   if (L.rpm > 2600) warnings.push('WARNING: RPM is unusually high.');
   if (L.depth > 1.5) warnings.push('WARNING: Depth of cut risks tool damage.');
-  State._wk = (L.rpm > 2600 ? 1 : 0) + (L.depth > 1.5 ? 2 : 0);
+  const isSecondAttempt = !!State.attempt1;
   
   return `
   <div class="lab-wrap">
     <div class="lab-header">
-      <div class="lab-title">Virtual Machining Center</div>
-      <div class="lab-sub">${State.attempt1 ? 'ATTEMPT 02 · FINAL REASSESSMENT' : 'PRACTICAL ASSESSMENT'} · EXTERNAL CYLINDRICAL TURNING</div>
+      <div class="lab-title">Virtual Machining Center ${isSecondAttempt ? '(Attempt 2)' : ''}</div>
+      <div class="lab-sub">PRACTICAL ASSESSMENT · EXTERNAL CYLINDRICAL TURNING</div>
       <div class="task-card">
         <div>
           <div class="section-title" style="margin-bottom:4px;">YOUR TASK</div>
@@ -790,7 +623,6 @@ function viewLab() {
           <div class="ov-box"><div class="ov-label">LIVE READING</div><div class="ov-value" id="ovCurrent">Ø55.00 mm</div></div>
         </div>
         <div class="ov-status" id="ovStatus">EXECUTING PROGRAM</div>
-        <button class="sound-toggle" id="soundBtn" onclick="AudioEngine.toggle()">🔇</button>
         <div class="view-controls">
           <button onclick="Machine.setCameraView('iso')" class="active" id="btn-cam-iso">ISO</button>
           <button onclick="Machine.setCameraView('front')" id="btn-cam-front">FRONT</button>
@@ -869,12 +701,15 @@ function setLab(key, val) {
   if (key === 'rpm') { State.lab.rpm = parseInt(val); document.getElementById('rpmVal').textContent = State.lab.rpm + ' RPM'; }
   if (key === 'feed') { State.lab.feed = parseFloat(val); document.getElementById('feedVal').textContent = State.lab.feed.toFixed(2) + ' mm/rev'; }
   if (key === 'depth') { State.lab.depth = parseFloat(val); document.getElementById('depthVal').textContent = State.lab.depth.toFixed(2) + ' mm'; }
-  if (key === 'tool') { State.lab.tool = val; render(); }
+  if (key === 'tool') { 
+    State.lab.tool = val; 
+    if (typeof Machine !== 'undefined' && Machine.setTool) Machine.setTool(val);
+    render(); 
+  }
   
-  // Re-render warnings if necessary (lightweight re-render of controls)
-  if (key === 'rpm' || key === 'depth') {
-    const wk = (State.lab.rpm > 2600 ? 1 : 0) + (State.lab.depth > 1.5 ? 2 : 0);
-    if (wk !== State._wk && !machineRunning) render();
+  if(key === 'rpm' || key === 'depth') {
+     const runBtn = document.getElementById('runBtn');
+     if(runBtn && !machineRunning) render(); 
   }
 }
 
@@ -911,34 +746,24 @@ let machineRunning = false;
 async function runMachine() {
   if (machineRunning) return;
   machineRunning = true;
-
+  
   const runBtn = document.getElementById('runBtn');
-  if (runBtn) { runBtn.disabled = true; runBtn.textContent = 'SUBMITTING...'; }
-
-  // The server validates the configuration and scores it; we only animate what it returns.
-  let res;
-  try {
-    res = await api('/assessments', { method: 'POST', body: { params: State.lab } });
-  } catch (e) {
-    machineRunning = false;
-    fail(e);
-    if (e.status === 409) return goTo(candidateHomeView());
-    if (runBtn) { runBtn.disabled = false; runBtn.textContent = 'EXECUTE CYCLE'; }
-    return;
+  if (runBtn) {
+    runBtn.disabled = true;
+    runBtn.textContent = 'EXECUTING...';
   }
-  const result = res.result;
-
-  if (runBtn) runBtn.textContent = 'EXECUTING...';
+  
   document.querySelectorAll('.controls-pane input, .tool-opt, .order-btns button').forEach(e => e.style.pointerEvents = 'none');
 
-  AudioEngine.initContext();   // needs a user gesture to resume
-
+  const bonus = (State.attempt1 && State.mcqScore !== undefined) ? (State.mcqScore * 3) : 0;
+  const result = computeResult(State.lab, bonus);
+  
   const ovStatus = document.getElementById('ovStatus');
   if (ovStatus) ovStatus.classList.add('show');
 
   renderTimeline(0);
   appendLog('G-Code program generated and loaded.');
-
+  
   await Machine.play(result, (phaseIdx, label) => {
     renderTimeline(phaseIdx, phaseIdx);
     if (ovStatus) ovStatus.textContent = label;
@@ -949,19 +774,21 @@ async function runMachine() {
     if (label === 'COMPLETE') appendLog(`Cycle completed. Final measurement: Ø${result.diameter.toFixed(2)} mm.`);
   }, (diam) => {
     const ovCurrent = document.getElementById('ovCurrent');
-    if (ovCurrent) ovCurrent.textContent = 'Ø' + diam.toFixed(2) + ' mm';
+    if(ovCurrent) ovCurrent.textContent = 'Ø' + diam.toFixed(2) + ' mm';
   });
 
   machineRunning = false;
   await new Promise(r => setTimeout(r, 1200));
-
-  if (res.attempt === 1) { State.attempt1 = result; goTo('result'); }
-  else { State.attempt2 = result; goTo('retest'); }
+  
+  if (!State.attempt1) {
+    State.attempt1 = result;
+    goTo('result');
+  } else {
+    State.attempt2 = result;
+    goTo('retest');
+  }
 }
 
-/* =========================================================================
-   Result & Readiness Views
-   ========================================================================= */
 function viewResult() {
   const r = State.attempt1;
   return `
@@ -1045,9 +872,6 @@ function viewReadiness() {
   </div></div>`;
 }
 
-/* =========================================================================
-   Upskill & MCQ Retest Flow
-   ========================================================================= */
 function viewUpskill() {
   return `
   <div class="page"><div class="container-narrow">
@@ -1062,119 +886,77 @@ function viewUpskill() {
       <button class="btn btn-block" style="margin-bottom:24px;" onclick="window.open('https://www.youtube.com/playlist?list=PLFW6lRTa1g808_CfYhZKdv2eXplAQiAwS','_blank');">OPEN FULL MODULE IN NEW TAB</button>
       
       <div style="border-top:1px solid var(--border); padding-top:24px;">
-        <button class="btn btn-primary btn-block" onclick="openQuiz()">PROCEED TO KNOWLEDGE CHECK</button>
+        <button class="btn btn-primary btn-block" onclick="goTo('mcq')">PROCEED TO KNOWLEDGE CHECK</button>
       </div>
     </div>
   </div></div>`;
 }
 
-async function openQuiz() {
-  try {
-    State.quiz = await api('/quiz');
-    goTo('mcq');
-  } catch (e) {
-    fail(e);
-    if (e.status === 409) goTo(candidateHomeView());
-  }
-}
-
 function viewMCQ() {
-  const q = State.quiz;
-  if (!q) return `<div class="page"><div class="container-narrow"><button class="btn btn-primary btn-block" onclick="openQuiz()">LOAD KNOWLEDGE CHECK</button></div></div>`;
   return `
   <div class="page"><div class="container-narrow">
     <div class="section-title">KNOWLEDGE CHECK</div>
-    <h1 class="h1">Verify Understanding</h1>
-    <p class="lead">These questions target the capabilities you did not demonstrate in the simulation. Correct answers earn bonus points on your final run, which you will configure yourself.</p>
-
-    <div class="panel">
-      <form id="mcqForm" onsubmit="submitMCQ(event)">
-        ${q.questions.map((x, i) => `
-        <div class="mcq-question">
-          <p>${i + 1}. ${esc(x.text)}</p>
-          <div class="mcq-cap mono">${esc(x.capability.toUpperCase())}</div>
-          ${x.options.map((o, j) => `
-          <label class="mcq-label"><input type="radio" name="${esc(x.id)}" value="${j}" ${j === 0 ? 'required' : ''}> ${esc(o)}</label>`).join('')}
-        </div>`).join('')}
-        <button type="submit" class="btn btn-primary btn-block" id="submitBtn" style="margin-top:16px;">SUBMIT ANSWERS</button>
+    <h1 class="h1">Verify Engineering Logic</h1>
+    <p class="lead">Answer these questions tailored to your specific capability gaps. You will then manually reconfigure the CNC machine for your final run.</p>
+    
+    <div class="panel" id="mcq-container">
+      <form id="mcqForm" onsubmit="submitDynamicMCQ(event)">
+        <div class="field"><label>1. Which tooling approach is standard for achieving the final accurate dimension?</label><select name="q1" required><option value="">Select...</option><option value="1">Utilize a finishing tool with appropriate conservative feed rates.</option><option value="0">Utilize a roughing tool at maximum spindle speed.</option></select></div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">SUBMIT & RECONFIGURE MACHINE</button>
       </form>
     </div>
   </div></div>`;
 }
 
-async function submitMCQ(e) {
+function submitDynamicMCQ(e) {
   e.preventDefault();
-  const answers = {};
-  new FormData(e.target).forEach((v, k) => { answers[k] = Number(v); });
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  try {
-    State.quizResult = await api(`/quiz/${State.quiz.quizId}/submit`, { method: 'POST', body: { answers } });
-    State.quizDone = true;
-    goTo('mcq-result');
-  } catch (err) {
-    btn.disabled = false;
-    fail(err);
+  const fd = new FormData(e.target);
+  let score = 0;
+  for (let [key, value] of fd.entries()) {
+    if(value === '1') score += 1;
   }
-}
-
-function viewMcqResult() {
-  const r = State.quizResult, q = State.quiz;
-  if (!r || !q) return viewLanding();
-  return `
-  <div class="page"><div class="container-narrow">
-    <div class="section-title">KNOWLEDGE CHECK RESULT</div>
-    <h1 class="h1">${r.score} / ${r.total} Correct</h1>
-    <p class="lead">${r.bonus > 0 ? `+${r.bonus} bonus points will be added to your final run. ` : ''}Review the answers below, then reconfigure the machine for your final run.</p>
-    <div class="panel">
-      ${q.questions.map((x, i) => {
-        const rv = r.review[i];
-        return `<div class="mcq-question">
-          <p>${i + 1}. ${esc(x.text)}</p>
-          <div class="mcq-review ${rv.correct ? 'ok' : 'bad'}">${rv.correct ? '✓ CORRECT' : '✗ INCORRECT'} — ${esc(x.options[rv.correctIndex])}</div>
-        </div>`;
-      }).join('')}
-    </div>
-    <button class="btn btn-primary btn-block" style="margin-top:32px;" onclick="goTo('lab')">CONFIGURE FINAL RUN</button>
-  </div></div>`;
+  State.mcqScore = score;
+  toast('Knowledge check complete. Please manually configure the machine for Attempt 02.');
+  goTo('lab');
 }
 
 function viewRetest() {
-  const a1 = State.attempt1, a2 = State.attempt2;
-  if (!a1 || !a2) return viewLanding();
+  const a1 = State.attempt1;
+  const a2 = State.attempt2;
   return `
   <div class="page"><div class="container-narrow">
     <div class="section-title">FINAL REASSESSMENT RESULT</div>
     <h1 class="h1">Execution Complete</h1>
-    <p class="lead">You have completed your final virtual simulation. Your verified capability score has been recorded.</p>
-
+    <p class="lead">You have completed your final virtual simulation. Your verified capability score has been logged.</p>
+    
     <div class="retest-flow">
       <div class="retest-card">
         <div class="rc-num mono">${a1.total}</div>
         <div class="rc-tag mono">ATTEMPT 1 · ${a1.readiness}</div>
       </div>
       <div class="retest-arrow">→</div>
-      <div class="retest-card" style="border-color: ${a2.readiness === 'READY' ? 'var(--badge-ready-border)' : 'var(--border)'};">
-        <div class="rc-num mono">${a2.total}</div>
-        <div class="rc-tag mono">FINAL · ${a2.readiness}</div>
+      <div class="retest-card" style="border-color: ${a2.readiness==='READY' ? 'var(--badge-ready-border)' : 'var(--border)'};">
+        <div class="rc-num mono" id="retestNum">${a2.total}</div>
+        <div class="rc-tag mono" id="retestTag">FINAL · ${a2.readiness}</div>
       </div>
     </div>
-
-    <div style="margin-top:32px;">
+    
+    <div id="retestAction" style="margin-top:32px;">
       <button class="btn btn-primary btn-block" onclick="goTo('profile')">VIEW CANDIDATE PROFILE</button>
     </div>
   </div></div>`;
 }
 
-/* =========================================================================
-   Final Candidate Profile
-   ========================================================================= */
 function viewProfile() {
   const c = State.candidate, r = State.attempt2 || State.attempt1;
   const isReady = r.readiness === 'READY';
   const cls = isReady ? 'badge-ready' : r.readiness === 'NEAR-READY' ? 'badge-near' : 'badge-not';
   
-  const opps = State.jobs;
+  const opps = [
+    { name: 'CNC Machinist', org: 'Precision Auto Components Pvt Ltd', loc: 'Chennai' },
+    { name: 'CNC Turning Operator', org: 'Chennai Tooling Works', loc: 'Chennai' },
+    { name: 'Junior Machinist', org: 'Vantage Precision Engineering', loc: 'Coimbatore' }
+  ];
 
   return `
   <div class="page"><div class="container">
@@ -1182,8 +964,8 @@ function viewProfile() {
     
     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px; padding:32px; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); margin-bottom:32px;">
       <div>
-        <div style="font-size:32px; font-weight:700; margin-bottom:8px;">${esc(c.name)}</div>
-        <div style="color:var(--text-2); font-size:16px;">${esc(c.targetRole)}</div>
+        <div style="font-size:32px; font-weight:700; margin-bottom:8px;">${c.name}</div>
+        <div style="color:var(--text-2); font-size:16px;">${c.targetRole}</div>
       </div>
       <div style="text-align:center;">
         <div class="mono" style="font-size:48px; font-weight:700; color:var(--text); margin-bottom:8px;">${r.total}<span style="font-size:24px; color:var(--text-3);">/100</span></div>
@@ -1200,7 +982,7 @@ function viewProfile() {
         <div class="section-title">MATCHED EMPLOYER OPPORTUNITIES</div>
         ${isReady ? opps.map(o => `
           <div style="padding:20px; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel-deep); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <div><div style="font-weight:600; font-size:15px; margin-bottom:4px;">${esc(o.name)}</div><div style="color:var(--text-2); font-size:13px;">${esc(o.org)} · ${esc(o.loc)}</div></div>
+            <div><div style="font-weight:600; font-size:15px; margin-bottom:4px;">${o.name}</div><div style="color:var(--text-2); font-size:13px;">${o.org} ·${o.loc}</div></div>
             <span class="badge badge-ready">STRONG MATCH</span>
           </div>`).join('') : `
           <div style="padding:24px; text-align:center; color:var(--text-2); border:1px dashed var(--border); border-radius:var(--radius);">
@@ -1212,79 +994,54 @@ function viewProfile() {
   </div></div>`;
 }
 
-/* =========================================================================
-   MSME / Employer Dashboard
-   ========================================================================= */
 function viewMsmeSelect() {
-  const d = State.demo;
   return `
   <div class="page"><div class="container">
-    <div class="section-title">EMPLOYER: ACCESS</div>
-    <h1 class="h1">Hire on Evidence. Not Claims.</h1>
-    <p class="lead">Log in to your MSME workspace to browse verified, ranked talent, or register your enterprise.</p>
+    <div class="section-title">Real-time Analytics & Knowledge System</div>
+    <h1 class="h1">Select Your Enterprise</h1>
+    <p class="lead">Log in to your MSME workspace or register a new enterprise to access verified talent.</p>
 
-    <div class="grid-2" style="margin-bottom:48px;">
-      <div class="panel">
-        <div class="section-title">MSME LOGIN</div>
-        <div class="field"><label>EMAIL</label><input id="m-email" type="email" autocomplete="email" maxlength="254"></div>
-        <div class="field"><label>PASSWORD</label><input id="m-pass" type="password" autocomplete="current-password" maxlength="128"></div>
-        <div class="form-error" id="formError" role="alert"></div>
-        <button class="btn btn-primary btn-block" id="submitBtn" data-submit onclick="submitEmployerLogin()">LOG IN</button>
-        ${d ? `<div class="demo-hint">Demo access: <strong>${esc(d.email)}</strong> / <strong>${esc(d.password)}</strong><button class="link-btn" onclick="fillDemo()">FILL</button></div>` : ''}
-      </div>
-      <div class="panel-deep" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:48px; border:1px dashed var(--border);">
-        <h2 class="h2">New to KAARYA?</h2>
-        <p style="color:var(--text-2); margin-bottom:24px;">Register your MSME to start hiring evidence-backed talent.</p>
-        <button class="btn btn-primary" onclick="goTo('msme-onboard')">ONBOARD NEW MSME</button>
-      </div>
+    <div class="grid-2" style="margin-bottom: 40px;">
+      ${MSME_LIST.map(m => `
+        <div class="panel" style="display:flex; flex-direction:column; justify-content:space-between; padding:24px;">
+          <div>
+            <h2 class="h2" style="margin-bottom:4px;">${m.name}</h2>
+            <div style="color:var(--text-2); font-size:14px; margin-bottom:24px;">${m.domain}</div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn btn-primary" style="flex:1; min-width:140px;" onclick="selectMsme('${m.id}')">SELECT & PROCEED</button>
+            <button class="btn" style="flex:1; min-width:140px;" onclick="window.open('${m.url}', '_blank')">VISIT SITE ↗</button>
+          </div>
+        </div>
+      `).join('')}
     </div>
 
-    ${State.msmes.length ? `
-    <div class="section-title">PARTNER ENTERPRISES</div>
-    <div class="grid-2">
-      ${State.msmes.map(m => `
-        <div class="panel" style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding:24px;">
-          <div>
-            <div style="font-weight:700; font-size:18px; margin-bottom:4px;">${esc(m.name)}</div>
-            <div style="color:var(--text-2); font-size:13px;">${esc(m.domain)}</div>
-          </div>
-          <a class="btn" href="${esc(m.url)}" target="_blank" rel="noopener noreferrer">VISIT SITE ↗</a>
-        </div>`).join('')}
-    </div>` : ''}
+    <div class="panel-deep" style="text-align:center; padding: 48px; border: 1px dashed var(--border);">
+       <h2 class="h2">New to KAARYA?</h2>
+       <p style="color:var(--text-2); margin-bottom:24px;">Register your MSME to start hiring evidence-backed talent.</p>
+       <button class="btn btn-primary" onclick="goTo('msme-onboard')">ONBOARD NEW MSME</button>
+    </div>
   </div></div>`;
 }
 
-function fillDemo() {
-  if (!State.demo) return;
-  document.getElementById('m-email').value = State.demo.email;
-  document.getElementById('m-pass').value = State.demo.password;
-}
-
-async function submitEmployerLogin() {
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  try {
-    const { user } = await api('/auth/login', { method: 'POST', body: { email: val('m-email'), password: val('m-pass') } });
-    applyUser(user);
-    if (user.role === 'employer') return openEmployerDashboard();
-    goTo(candidateHomeView());
-  } catch (e) {
-    btn.disabled = false;
-    showFormError(e);
-  }
+function selectMsme(id) {
+  const msme = MSME_LIST.find(m => m.id === id) || MSME_LIST[0];
+  State.currentMsme = msme;
+  goTo('msme-dashboard');
 }
 
 function viewMsmeOnboard() {
   return `
   <div class="page"><div class="container-narrow">
-    <a class="back-link" onclick="goTo('msme-select')">← BACK</a>
+    <a class="back-link" onclick="goTo('msme-select')">← BACK TO SELECTION</a>
     <div class="section-title">MSME REGISTRATION</div>
     <h1 class="h1">Onboard Your Enterprise</h1>
     <p class="lead">Provide your MSME details to unlock access to the verified talent pool.</p>
+
     <div class="panel">
-      <div class="field"><label>UDYAM REGISTRATION NUMBER</label><input id="m-reg" placeholder="e.g. UDYAM-TN-00-0000000" maxlength="30"></div>
-      <div class="field"><label>MSME NAME</label><input id="m-name" placeholder="Enter full legal name" maxlength="120"></div>
-      <div class="field"><label>INDUSTRY DOMAIN</label><input id="m-domain" placeholder="e.g. Precision Manufacturing" maxlength="120"></div>
+      <div class="field"><label>UDYAM REGISTRATION NUMBER</label><input id="m-reg" placeholder="e.g. UDYAM-XX-00-0000000"></div>
+      <div class="field"><label>MSME NAME</label><input id="m-name" placeholder="Enter full legal name"></div>
+      <div class="field"><label>INDUSTRY DOMAIN</label><input id="m-domain" placeholder="e.g. Precision Manufacturing, Clean Tech"></div>
       <div class="grid-2">
         <div class="field">
           <label>ANNUAL TURNOVER</label>
@@ -1294,59 +1051,38 @@ function viewMsmeOnboard() {
             <option>Medium (₹50 Cr - ₹250 Cr)</option>
           </select>
         </div>
-        <div class="field"><label>WORKFORCE SIZE</label><input type="number" id="m-size" placeholder="e.g. 50" min="1" max="100000"></div>
+        <div class="field"><label>WORKFORCE SIZE</label><input type="number" id="m-size" placeholder="e.g. 50"></div>
       </div>
-      <div class="field"><label>YOUR NAME</label><input id="m-contact" autocomplete="name" maxlength="80"></div>
-      <div class="grid-2">
-        <div class="field"><label>WORK EMAIL</label><input id="m-email" type="email" autocomplete="email" maxlength="254"></div>
-        <div class="field"><label>PASSWORD</label><input id="m-pass" type="password" autocomplete="new-password" maxlength="128" placeholder="At least 8 characters"></div>
-      </div>
-      <div class="form-error" id="formError" role="alert"></div>
-      <button class="btn btn-primary btn-block" id="submitBtn" data-submit onclick="submitMsmeOnboard()">COMPLETE REGISTRATION & PROCEED</button>
+      <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="submitMsmeOnboard()">COMPLETE REGISTRATION & PROCEED</button>
     </div>
   </div></div>`;
 }
 
-async function submitMsmeOnboard() {
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  try {
-    const { user } = await api('/auth/register', { method: 'POST', body: {
-      role: 'employer', name: val('m-contact'), email: val('m-email'), password: val('m-pass'),
-      udyam: val('m-reg'), orgName: val('m-name'), domain: val('m-domain'),
-      turnover: val('m-turnover'), workforce: val('m-size')
-    } });
-    applyUser(user);
-    toast('MSME successfully onboarded');
-    await openEmployerDashboard();
-  } catch (e) {
-    btn.disabled = false;
-    showFormError(e);
-  }
-}
-
-async function openEmployerDashboard() {
-  try {
-    State.pool = await api('/employer/candidates');
-    goTo('msme-dashboard');
-  } catch (e) { fail(e); }
+function submitMsmeOnboard() {
+  const name = document.getElementById('m-name').value || 'New MSME Enterprise';
+  const domain = document.getElementById('m-domain').value || 'Manufacturing';
+  State.currentMsme = { id: 'new', name, domain, url: '#' };
+  toast('MSME Successfully Onboarded');
+  goTo('msme-dashboard');
 }
 
 function viewMsmeDashboard() {
   const cands = getAllCandidates();
   const readyCount = cands.filter(c => c.result.readiness === 'READY').length;
   const nearCount = cands.filter(c => c.result.readiness === 'NEAR-READY').length;
+  const msmeName = State.currentMsme ? State.currentMsme.name : 'EMPLOYER';
   
   return `
   <div class="page"><div class="container">
-    <div class="section-title">EMPLOYER PORTAL · ${esc(State.user.profile.orgName)}</div>
+    <a class="back-link" onclick="goTo('msme-select')">← SWITCH MSME</a>
+    <div class="section-title">MSME PORTAL • ${msmeName}</div>
     <h1 class="h1">Hire on Evidence. Not Claims.</h1>
     
     <div class="stat-grid">
-      <div class="stat-card"><div class="stat-num">${State.pool.stats.openRoles}</div><div class="stat-label">OPEN ROLES</div></div>
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">OPEN ROLES</div></div>
       <div class="stat-card"><div class="stat-num" style="color:var(--badge-ready-text);">${readyCount}</div><div class="stat-label">READY CANDIDATES</div></div>
       <div class="stat-card"><div class="stat-num" style="color:var(--badge-near-text);">${nearCount}</div><div class="stat-label">NEAR-READY TALENT</div></div>
-      <div class="stat-card"><div class="stat-num">${State.pool.stats.totalAssessed}</div><div class="stat-label">TOTAL ASSESSED</div></div>
+      <div class="stat-card"><div class="stat-num">34</div><div class="stat-label">TOTAL ASSESSED</div></div>
     </div>
 
     <div class="panel" style="margin-bottom:40px; border-left: 4px solid var(--accent);">
@@ -1373,7 +1109,7 @@ function viewMsmeDashboard() {
       <div class="near-ready-card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
           <div>
-            <span style="font-weight:700; font-size:16px; margin-right:12px;">${esc(c.name)}</span>
+            <span style="font-weight:700; font-size:16px; margin-right:12px;">${c.name}</span>
             <span class="mono" style="color:var(--text-2); margin-right:12px;">Score: ${c.result.total}/100</span>
             <span style="font-size:13px;">GAP: <strong>${c.result.gap || 'N/A'}</strong></span>
           </div>
@@ -1386,50 +1122,52 @@ function viewMsmeDashboard() {
 }
 
 function getAllCandidates() {
-  return State.pool ? State.pool.candidates : [];
+  const list = [];
+  if (State.candidate.built && (State.attempt1 || State.attempt2)) {
+    list.push({ id: 'ravi', name: State.candidate.name, result: State.attempt2 || State.attempt1 });
+  }
+  Object.keys(SEED).forEach(id => list.push({ id, name: SEED[id].name, result: SEED[id].result }));
+  return list.sort((a,b) => b.result.total - a.result.total);
 }
 
 function candidateRow(c) {
   const r = c.result;
   const cls = r.readiness === 'READY' ? 'badge-ready' : r.readiness === 'NEAR-READY' ? 'badge-near' : 'badge-not';
-  return `<tr class="cand-row" onclick="openReport(${Number(c.id)})">
-    <td class="name-cell">${esc(c.name)}${c.shortlisted ? ' <span class="badge badge-near" style="margin-left:8px;">SHORTLISTED</span>' : ''}</td>
+  return `<tr class="cand-row" onclick="openReport('${c.id}')">
+    <td class="name-cell">${c.name}</td>
     <td class="mono" style="font-weight:600;">${r.total}</td>
     <td class="mono">${r.capabilityMatch}%</td>
     <td class="mono">${r.verifiedCount}/5</td>
-    <td style="color:var(--text-2); font-size:13px;">${esc(r.gap || 'None')}</td>
+    <td style="color:var(--text-2); font-size:13px;">${r.gap || 'None'}</td>
     <td><span class="badge ${cls}">${r.readiness}</span></td>
   </tr>`;
 }
 
-async function openReport(id) {
-  try {
-    State.report = await api('/employer/candidates/' + Number(id));
-    goTo('msme-report');
-  } catch (e) { fail(e); }
+function openReport(id) {
+  State.selectedCandidateId = id;
+  goTo('msme-report');
 }
 
-/* =========================================================================
-   MSME Report & Replay View
-   ========================================================================= */
-function getCandidateById() {
-  return State.report;
+function getCandidateById(id) {
+  if (id === 'ravi') return { id, name: State.candidate.name, role: State.candidate.targetRole, result: State.attempt2 || State.attempt1 };
+  const s = SEED[id];
+  return { id, name: s.name, role: s.role, result: s.result };
 }
 
 function viewMsmeReport() {
-  const c = getCandidateById();
+  const c = getCandidateById(State.selectedCandidateId);
   const r = c.result;
   const cls = r.readiness === 'READY' ? 'badge-ready' : r.readiness === 'NEAR-READY' ? 'badge-near' : 'badge-not';
-  const acted = c.actions || {};
+  const acted = State.employerActions[c.id] || {};
   
   return `
   <div class="page"><div class="container">
-    <a class="back-link" onclick="openEmployerDashboard()">← BACK TO POOL</a>
+    <a class="back-link" onclick="goTo('msme-dashboard')">← BACK TO POOL</a>
     
     <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px; margin-bottom:32px;">
       <div>
-        <h1 class="h1" style="margin-bottom:4px;">${esc(c.name)}</h1>
-        <div style="color:var(--text-2); font-size:16px;">${esc(c.role)}</div>
+        <h1 class="h1" style="margin-bottom:4px;">${c.name}</h1>
+        <div style="color:var(--text-2); font-size:16px;">${c.role}</div>
       </div>
       <div style="text-align:right;">
         <div class="mono" style="font-size:36px; font-weight:700; color:var(--text); margin-bottom:8px;">${r.total}<span style="font-size:18px; color:var(--text-3);">/100</span></div>
@@ -1481,13 +1219,11 @@ function viewMsmeReport() {
   </div></div>`;
 }
 
-async function employerAct(id, key) {
-  try {
-    const { actions } = await api(`/employer/candidates/${Number(id)}/actions`, { method: 'POST', body: { action: key } });
-    State.report.actions = actions;
-    toast(key === 'shortlist' ? 'Candidate Shortlisted' : 'Shop Floor Test Requested');
-    render();
-  } catch (e) { fail(e); }
+function employerAct(id, key) {
+  if (!State.employerActions[id]) State.employerActions[id] = {};
+  State.employerActions[id][key] = true;
+  toast(key === 'shortlist' ? 'Candidate Shortlisted' : 'Shop Floor Test Requested');
+  render();
 }
 
 async function replayAssessment(id) {
@@ -1498,129 +1234,22 @@ async function replayAssessment(id) {
     status.textContent = 'INITIALIZING REPLAY';
   }
   
-  AudioEngine.initContext();
-  
   Machine.attachTo('replayViewportHost');
   await Machine.play(c.result, (idx, label) => { if(status) status.textContent = label; }, () => {});
   if(status) status.textContent = 'REPLAY CONCLUDED';
 }
 
-/* =========================================================================
-   Initialization
-   ========================================================================= */
-function afterRender() {
-  const isLight = document.documentElement.hasAttribute('data-theme');
-  if (isLightMode !== isLight) {
-    if(isLightMode) document.documentElement.setAttribute('data-theme', 'light');
-    else document.documentElement.removeAttribute('data-theme');
-  }
-
-  if (State.view === 'landing') {
-    Machine.attachTo('heroMachineHost');
-  } else if (State.view === 'lab') {
-    Machine.attachTo('viewportHost');
-    renderOrderList();
-    renderTimeline(-1);
-  }
-}
-
-</script>
-<script>
-/* =========================================================================
-   Procedural Audio Engine
-   ========================================================================= */
-const AudioEngine = (function() {
-  let ctx, spindleOsc, spindleGain, noiseSrc, filter, noiseGain;
-  let enabled = false;
-  let initialized = false;
-
-  function initContext() {
-    if (initialized) return;
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if(!Ctx) return;
-    ctx = new Ctx();
-
-    // Spindle Hum (Triangle)
-    spindleOsc = ctx.createOscillator();
-    spindleOsc.type = 'triangle';
-    spindleGain = ctx.createGain();
-    spindleGain.gain.value = 0;
-    spindleOsc.connect(spindleGain);
-    spindleGain.connect(ctx.destination);
-    spindleOsc.start();
-
-    // Cutting Noise (Filtered White Noise)
-    const bufferSize = ctx.sampleRate * 2;
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-    
-    noiseSrc = ctx.createBufferSource();
-    noiseSrc.buffer = noiseBuffer;
-    noiseSrc.loop = true;
-    
-    filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 1500;
-    filter.Q.value = 1.0;
-    
-    noiseGain = ctx.createGain();
-    noiseGain.gain.value = 0;
-
-    noiseSrc.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-    noiseSrc.start();
-    
-    initialized = true;
-  }
-
-  function toggle() {
-    enabled = !enabled;
-    const btn = document.getElementById('soundBtn');
-    if (btn) btn.textContent = enabled ? '🔊' : '🔇';
-    if (enabled && !initialized) initContext();
-    if (initialized && ctx) {
-      if(ctx.state === 'suspended') ctx.resume();
-      if(!enabled) stop();
-    }
-  }
-
-  function setSpindle(rpm) {
-    if (!enabled || !ctx) return;
-    const targetFreq = 50 + (rpm / 3000) * 150;
-    spindleOsc.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
-    spindleGain.gain.setTargetAtTime(0.08, ctx.currentTime, 0.2);
-  }
-
-  function setCutting(isCutting) {
-    if (!enabled || !ctx) return;
-    noiseGain.gain.setTargetAtTime(isCutting ? 0.15 : 0, ctx.currentTime, 0.05);
-  }
-
-  function stop() {
-    if (!ctx) return;
-    spindleGain.gain.setTargetAtTime(0, ctx.currentTime, 0.1);
-    noiseGain.gain.setTargetAtTime(0, ctx.currentTime, 0.1);
-  }
-
-  return { toggle, setSpindle, setCutting, stop, initContext };
-})();
-
-
-/* =========================================================================
-   THREE.JS — CNC MACHINE (Realistic Vertex Deformation Turning)
-   ========================================================================= */
 const Machine = (function() {
   let renderer, scene, camera, group, spindleGroup, workpiece, toolGroup, statusLight, chips = [];
+  let currentToolMesh = null;
+  const toolSets = {};
+  
   let angle = { theta: Math.PI * 0.25, phi: 1.1, radius: 6.5 };
   let target = new THREE.Vector3(0, 1.0, 0);
   let running = false, rpm = 0;
   let hostEl = null;
   let ready = false;
-  let ambientLight, keyLight, floor;
-
-  // Workpiece constants
+  
   const WP_RADIUS = 0.55;
   const WP_LENGTH = 2.1;
   const WP_SEG_RADIAL = 48;
@@ -1630,27 +1259,22 @@ const Machine = (function() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 
-    ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
-    keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
     keyLight.position.set(4, 8, 5); keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(1024, 1024);
     scene.add(keyLight);
-    const fill = new THREE.PointLight(0xF7DC00, 0.3, 20);
-    fill.position.set(-2, 3, 2);
-    scene.add(fill);
-
-    // Floor
-    floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(20, 20),
-      new THREE.MeshStandardMaterial({ color: 0x050607, roughness: 1.0 })
-    );
-    floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
-    scene.add(floor);
+    
+    const spotLight = new THREE.SpotLight(0xffffff, 2.5);
+    spotLight.position.set(0, 5, 2);
+    spotLight.angle = Math.PI / 4;
+    spotLight.penumbra = 0.5;
+    scene.add(spotLight);
 
     group = new THREE.Group();
 
-    // Materials
     const steel = new THREE.MeshStandardMaterial({ color: 0x2A2F33, roughness: 0.6, metalness: 0.6 });
     const steelDark = new THREE.MeshStandardMaterial({ color: 0x111416, roughness: 0.7, metalness: 0.5 });
     const aluminum = new THREE.MeshStandardMaterial({ color: 0x9CA3A7, roughness: 0.3, metalness: 0.8 });
@@ -1660,12 +1284,11 @@ const Machine = (function() {
     bed.position.set(0, 0.25, 0); bed.castShadow = true; bed.receiveShadow = true;
     group.add(bed);
 
-    // Headstock (Left)
+    // Headstock
     const headstock = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.4, 1.6), steelDark);
     headstock.position.set(-1.9, 1.2, 0); headstock.castShadow = true;
     group.add(headstock);
 
-    // Spindle & Chuck
     spindleGroup = new THREE.Group();
     spindleGroup.position.set(-1.3, 1.2, 0);
     group.add(spindleGroup);
@@ -1674,12 +1297,9 @@ const Machine = (function() {
     chuck.rotation.z = Math.PI / 2; chuck.position.x = 0.2; chuck.castShadow = true;
     spindleGroup.add(chuck);
 
-    // Workpiece setup for Vertex Deformation
-    // Create cylinder along Y, then rotate geometry so its length is along local X
     const wpGeo = new THREE.CylinderGeometry(WP_RADIUS, WP_RADIUS, WP_LENGTH, WP_SEG_RADIAL, WP_SEG_HEIGHT);
     wpGeo.rotateZ(Math.PI / 2); 
     
-    // Store original radii for reset capability
     const pos = wpGeo.attributes.position;
     const origRadii = new Float32Array(pos.count);
     for(let i=0; i < pos.count; i++) {
@@ -1690,31 +1310,74 @@ const Machine = (function() {
     wpGeo.userData.originalRadii = origRadii;
 
     workpiece = new THREE.Mesh(wpGeo, aluminum);
-    // Position it so one end is inside the chuck
     workpiece.position.x = 1.45;
     workpiece.castShadow = true;
     spindleGroup.add(workpiece);
 
-    // Tool Carriage
+    // Tool Carriage System
     toolGroup = new THREE.Group();
-    toolGroup.position.set(1.2, 1.2, 0.7);
+    // Start parked at safe right
+    toolGroup.position.set(1.2, 1.2, 0.8);
     
+    // Tool Post (Holder)
     const holder = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.6), steelDark);
-    holder.position.set(0, -0.2, 0.3); holder.castShadow = true;
+    holder.position.set(0, -0.2, 0.5); 
+    holder.castShadow = true;
     toolGroup.add(holder);
     
-    const bit = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.3), new THREE.MeshStandardMaterial({color:0xD97706, roughness:0.2, metalness:0.9}));
-    bit.position.set(-0.1, 0, -0.15); // Tip at approx (0,0,0) relative to toolGroup
-    toolGroup.add(bit);
+    // Create Tool Variations
+    const shankMat = new THREE.MeshStandardMaterial({ color: 0x111416, roughness: 0.8, metalness: 0.4 });
+    const gold = new THREE.MeshStandardMaterial({ color: 0xD97706, roughness: 0.3, metalness: 0.8 });
+    const silver = new THREE.MeshStandardMaterial({ color: 0x9CA3A7, roughness: 0.2, metalness: 0.9 });
+    const darkCarbide = new THREE.MeshStandardMaterial({ color: 0x2A2F33, roughness: 0.4, metalness: 0.7 });
+
+    // 1. Roughing Tool (Thick shank, square insert)
+    const gRough = new THREE.Group();
+    const sRough = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.15, 0.7), shankMat);
+    sRough.position.set(0, -0.05, 0.35); // Attaches to tool post
+    const iRough = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.05, 0.12), gold);
+    iRough.position.set(0.06, 0.05, 0.06); // Tip aligns precisely at local (0,0,0) offset
+    gRough.add(sRough, iRough);
+    toolSets.roughing = gRough;
+
+    // 2. Finishing Tool (Tapered shank, diamond insert)
+    const gFinish = new THREE.Group();
+    const sFinish = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, 0.7), shankMat);
+    sFinish.position.set(0, -0.05, 0.35);
+    const iFinishGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.05, 4);
+    iFinishGeo.rotateY(Math.PI / 4);
+    const iFinish = new THREE.Mesh(iFinishGeo, silver);
+    iFinish.position.set(0.04, 0.05, 0.04); 
+    gFinish.add(sFinish, iFinish);
+    toolSets.finishing = gFinish;
+
+    // 3. General Tool (Standard shank, triangle insert)
+    const gGen = new THREE.Group();
+    const sGen = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.15, 0.7), shankMat);
+    sGen.position.set(0, -0.05, 0.35);
+    const iGenGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.05, 3);
+    iGenGeo.rotateY(-Math.PI / 6);
+    const iGen = new THREE.Mesh(iGenGeo, darkCarbide);
+    iGen.position.set(0.04, 0.05, 0.04);
+    gGen.add(sGen, iGen);
+    toolSets.general = gGen;
     
     group.add(toolGroup);
 
-    // Status Light
     statusLight = new THREE.Mesh(new THREE.SphereGeometry(0.06,16,16), new THREE.MeshStandardMaterial({color:0x222222, emissive:0x000000}));
     statusLight.position.set(-2.2, 2.0, 0.5);
     group.add(statusLight);
 
     scene.add(group);
+  }
+
+  function setTool(type) {
+    if (!toolGroup) return;
+    if (currentToolMesh) {
+      toolGroup.remove(currentToolMesh);
+    }
+    currentToolMesh = toolSets[type] || toolSets['general'];
+    toolGroup.add(currentToolMesh);
   }
 
   function resetWorkpiece() {
@@ -1737,13 +1400,11 @@ const Machine = (function() {
   function deformWorkpiece(toolWorldX, targetRadius) {
     const localToolPoint = workpiece.worldToLocal(new THREE.Vector3(toolWorldX, 0, 0));
     const localCutX = localToolPoint.x;
-
     const pos = workpiece.geometry.attributes.position;
     let modified = false;
     
     for (let i = 0; i < pos.count; i++) {
       const vx = pos.getX(i);
-      // Tool cuts from positive X to negative X. Deform everything right of the tool.
       if (vx > localCutX) {
         const vy = pos.getY(i);
         const vz = pos.getZ(i);
@@ -1796,19 +1457,14 @@ const Machine = (function() {
       window.addEventListener('resize', fit);
     }
     if (renderer.domElement.parentElement !== host) {
-      host.innerHTML = ''; // Clear prior overlays
+      host.innerHTML = ''; 
       host.appendChild(renderer.domElement);
       renderer.domElement.style.width = '100%';
       renderer.domElement.style.height = '100%';
       renderer.domElement.style.display = 'block';
       renderer.domElement.style.cursor = 'grab';
-      
-      const st = document.createElement('div');
-      st.className = 'ov-status'; 
-      st.id = hostId.replace('ViewportHost', 'Status');
-      host.appendChild(st);
     }
-    applyTheme(typeof isLightMode !== 'undefined' ? isLightMode : false);
+    setTool(typeof State !== 'undefined' ? State.lab.tool : 'general');
     fit();
     ready = true;
   }
@@ -1846,7 +1502,7 @@ const Machine = (function() {
     for (let i = chips.length - 1; i >= 0; i--) {
       const c = chips[i];
       c.position.add(c.userData.vel);
-      c.userData.vel.y -= 0.002; // gravity
+      c.userData.vel.y -= 0.002; 
       c.userData.life -= 0.02;
       c.material.opacity = Math.max(0, c.userData.life);
       c.material.transparent = true;
@@ -1893,27 +1549,23 @@ const Machine = (function() {
     running = false; 
     rpm = result.params.rpm;
     
-    // Z represents distance from spindle axis
-    // X is longitudinal travel
     const startRad = 0.55; 
     const finalRad = Math.max(0.48, result.diameter / 100);
     const roughRad = Math.max(0.50, (startRad + finalRad) / 2 + 0.005);
     
-    const startX = 1.2; // Tool parked right
-    const endX = -0.6;  // Tool cut limit
-    const safeZ = 0.8;  // Tool pulled back
+    const startX = 1.2; 
+    const endX = -0.6;  
+    const safeZ = 0.8;  
 
     toolGroup.position.set(startX, 1.2, safeZ);
     onPhase(0, 'INITIALIZING SYSTEM'); await wait(500);
 
     onPhase(1, 'SPINDLE START'); 
     running = true;
-    AudioEngine.setSpindle(rpm);
     await tween(500, p => { toolGroup.position.z = lerp(safeZ, startRad + 0.05, p); });
 
     onPhase(2, 'ROUGHING');
     toolGroup.position.z = roughRad;
-    AudioEngine.setCutting(true);
     await tween(1200, p => {
       const curX = lerp(startX, endX, p);
       toolGroup.position.x = curX;
@@ -1921,15 +1573,12 @@ const Machine = (function() {
       onDiameter(roughRad * 100);
       if (Math.random() < 0.6) spawnChip();
     });
-    AudioEngine.setCutting(false);
     
-    // Retract & Return
     await tween(200, p => { toolGroup.position.z = lerp(roughRad, safeZ, p); });
     await tween(400, p => { toolGroup.position.x = lerp(endX, startX, p); });
 
     onPhase(3, 'FINISHING');
     toolGroup.position.z = finalRad;
-    AudioEngine.setCutting(true);
     await tween(1400, p => {
       const curX = lerp(startX, endX, p);
       toolGroup.position.x = curX;
@@ -1937,7 +1586,6 @@ const Machine = (function() {
       onDiameter(finalRad * 100);
       if (Math.random() < 0.4) spawnChip();
     });
-    AudioEngine.setCutting(false);
 
     onPhase(4, 'MEASURING');
     await tween(300, p => { toolGroup.position.z = lerp(finalRad, safeZ, p); });
@@ -1946,21 +1594,15 @@ const Machine = (function() {
 
     onPhase(5, 'COMPLETE');
     running = false;
-    AudioEngine.stop();
     onDiameter(result.diameter);
-  }
-
-  function applyTheme(isLight) {
-    if (!floor || !ambientLight || !keyLight) return;
-    floor.material.color.setHex(isLight ? 0xE2E8F0 : 0x050607);
-    ambientLight.intensity = isLight ? 0.8 : 0.4;
-    keyLight.intensity = isLight ? 0.6 : 1.0;
   }
 
   function setCameraView(view) {
     let endTheta = angle.theta, endPhi = angle.phi, endRadius = angle.radius;
     
-    document.querySelectorAll('.view-controls button').forEach(b => b.classList.remove('active'));
+    const btns = document.querySelectorAll('.view-controls button');
+    if (btns.length) btns.forEach(b => b.classList.remove('active'));
+    
     const btn = document.getElementById('btn-cam-' + view);
     if(btn) btn.classList.add('active');
 
@@ -1978,31 +1620,20 @@ const Machine = (function() {
     });
   }
 
-  return { attachTo, play, applyTheme, setCameraView, get ready() { return ready; } };
+  return { attachTo, play, setCameraView, setTool, get ready() { return ready; } };
 })();
-</script>
-<script>
-// Pressing Enter inside a form-like panel triggers its primary button.
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter') return;
-  const t = e.target;
-  if (!t || t.tagName !== 'INPUT' || ['range', 'radio', 'checkbox'].includes(t.type)) return;
-  const btn = document.querySelector('[data-submit]');
-  if (btn && !btn.disabled) { e.preventDefault(); btn.click(); }
-});
 
-(async function boot() {
-  try {
-    const [me, jobs, msmes] = await Promise.all([api('/auth/me'), api('/jobs'), api('/msmes')]);
-    applyUser(me.user);
-    State.jobs = jobs.jobs;
-    State.msmes = msmes.msmes;
-    State.demo = msmes.demo;
-  } catch (e) {
-    console.error(e);
+function afterRender() {
+  if (State.view === 'landing') {
+    Machine.attachTo('heroMachineHost');
+  } else if (State.view === 'lab') {
+    Machine.attachTo('viewportHost');
+    renderOrderList();
+    renderTimeline(-1);
   }
-  render();
-})();
+}
+
+render();
 </script>
 </body>
 </html>
